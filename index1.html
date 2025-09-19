@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Nguyễn Tuấn Anh - Creative Developer Portfolio</title>
     <script src="https://cdn.tailwindcss.com"></script>
+     <link rel="icon" href="./static/images/faricon.png" type="image/x-icon">
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap"
         rel="stylesheet">
@@ -13,11 +14,42 @@
     <link rel="stylesheet" href="./static/css/style.css">
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <style>
+        .hero-wrap {
+    height: 100vh;
+    min-height: 100%;
+    position: relative;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: top center;
+    background-attachment: fixed;
+    z-index: 0;
+}
+    nav.glass-dark {
+        width: 100%; /* Giữ khung full-width */
+    }
+        nav.glass-dark .sub-glass-dark-to-width {
+            max-width: 1200px; 
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem;
+        }
+       
+        .hero-wrap .container {
+            max-width: 1200px; 
+            margin-left: auto;
+            margin-right: auto;
+            padding-left: 1.5rem;
+            padding-right: 1.5rem; 
+        }
+    </style>
 </head>
 
 <body class="bg-slate-900 text-slate-100 overflow-x-hidden">
     <!-- Navigation -->
     <nav class="fixed top-0 left-0 right-0 z-50 glass-dark">
+        <div class="sub-glass-dark-to-width">
         <div class="container mx-auto px-6 py-4">
             <div class="flex items-center justify-between">
                 <div class="text-2xl font-bold text-gradient font-mono">
@@ -52,10 +84,36 @@
                 <a href="#contact" class="block text-slate-300 hover:text-blue-400 transition-colors">Contact</a>
             </div>
         </div>
+        </div>
     </nav>
 
+        <!-- Floating Navigation -->
+    <!-- <nav class="fixed top-6 left-1/2 transform -translate-x-1/2 z-40 glass-effect rounded-full px-6 py-3">
+        <div class="flex space-x-6">
+            <a href="#hero" class="text-white hover:text-blue-400 transition-colors duration-300">
+                <i class="fas fa-home"></i>
+            </a>
+            <a href="#about" class="text-white hover:text-blue-400 transition-colors duration-300">
+                <i class="fas fa-user"></i>
+            </a>
+            <a href="#skills" class="text-white hover:text-blue-400 transition-colors duration-300">
+                <i class="fas fa-code"></i>
+            </a>
+            <a href="#projects" class="text-white hover:text-blue-400 transition-colors duration-300">
+                <i class="fas fa-briefcase"></i>
+            </a>
+            <a href="#education" class="text-white hover:text-blue-400 transition-colors duration-300">
+                <i class="fas fa-graduation-cap"></i>
+            </a>
+            <a href="#contact" class="text-white hover:text-blue-400 transition-colors duration-300">
+                <i class="fas fa-envelope"></i>
+            </a>
+        </div>
+    </nav> -->
+
     <!-- Hero Section -->
-    <section id="home" class="min-h-screen flex items-center justify-center relative overflow-hidden pt-20">
+    <section id="home" class=" hero-wrap  min-h-screen flex items-center justify-center relative overflow-hidden pt-20"
+     style="background-image:url(static/images/bg-img.png) ;">
 
                 <!-- Particles Background -->
         <div class="particles">
@@ -70,7 +128,7 @@
             <div class="particle" style="left: 90%; animation-delay: 16s;"></div>
         </div>
         <!-- Animated Background -->
-        <div class="absolute inset-0 opacity-20">
+        <!-- <div class="absolute inset-0 opacity-20">
             <div
                 class="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl animate-float">
             </div>
@@ -78,14 +136,14 @@
                 style="animation-delay: 2s;"></div>
             <div class="absolute bottom-1/4 left-1/3 w-96 h-96 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl animate-float"
                 style="animation-delay: 4s;"></div>
-        </div>
+        </div> -->
 
-        <div class="container mx-auto px-6 relative z-10">
+        <div class=" mx-auto px-6 relative z-10">
             <div class="grid lg:grid-cols-2 gap-12 items-center">
                 <!-- Text Content -->
-                <div class="space-y-8 animate-slide-in-left">
+                <div class="space-y-8 animate-slide-in-left ">
                     <div class="space-y-4">
-                        <p class="text-blue-400 font-mono text-lg">console.log("Hello World!");</p>
+                        <p class="text-blue-400 font-mono text-lg">Console.Writeline("Hello World!");</p>
                         <h1 class="text-5xl lg:text-7xl font-black leading-tight">
                             Tôi là <span class="text-gradient">Anh NT</span>
                         </h1>
@@ -133,19 +191,19 @@
                 </div>
 
                 <!-- Profile Image -->
-                <div class="flex justify-center animate-slide-in-right">
+                <!-- <div class="flex justify-center animate-slide-in-right">
                     <div class="relative">
-                        <!-- Pulse rings -->
+                       
                         <div class="absolute inset-0 rounded-full bg-blue-400 animate-pulse-ring"></div>
                         <div class="absolute inset-0 rounded-full bg-purple-400 animate-pulse-ring"
                             style="animation-delay: 0.5s;"></div>
 
-                        <!-- Main image container -->
+                       
                         <div class="relative w-80 h-80 rounded-full overflow-hidden border-4 border-blue-400 shadow-2xl">
                              <img src="./static/images/profile.png" alt="Nguyễn Tuấn Anh" class="w-full h-full object-cover">
                         </div>
 
-                        <!-- Floating tech icons -->
+                      
                         <div
                             class="absolute -top-4 -right-4 w-16 h-16 glass rounded-2xl flex items-center justify-center animate-float">
                             <i class="fab fa-react text-3xl text-blue-400"></i>
@@ -163,7 +221,7 @@
                             <i class="fab fa-js-square text-2xl text-yellow-300"></i>
                         </div>
                     </div>
-                </div>
+                </div> -->
             </div>
         </div>
 
@@ -204,15 +262,15 @@
                         <div class="grid grid-cols-3 gap-6 pt-8">
                             <div class="text-center">
                                 <div class="text-3xl font-bold text-blue-400 mb-2">15+</div>
-                                <div class="text-slate-400 text-sm">Dự án hoàn thành</div>
+                                <div class="text-slate-400 text-sm">Project completed</div>
                             </div>
                             <div class="text-center">
                                 <div class="text-3xl font-bold text-purple-400 mb-2">0+</div>
-                                <div class="text-slate-400 text-sm">Năm kinh nghiệm</div>
+                                <div class="text-slate-400 text-sm">Years of experience</div>
                             </div>
                             <div class="text-center">
                                 <div class="text-3xl font-bold text-green-400 mb-2">100%</div>
-                                <div class="text-slate-400 text-sm">Khách hàng hài lòng</div>
+                                <div class="text-slate-400 text-sm">Customer satisfaction</div>
                             </div>
                         </div>
                     </div>
@@ -289,10 +347,10 @@
             <div class="max-w-6xl mx-auto">
                 <div class="text-center mb-16 animate-fade-in-up">
                     <h2 data-aos="fade-up" class="text-4xl lg:text-5xl font-bold mb-6">
-                        <span class="text-gradient">Kỹ Năng Công Nghệ</span>
+                        <span class="text-gradient">Technology Skills</span>
                     </h2>
-                    <p data-aos="fade-up class=" class="text-slate-400 max-w-2xl mx-auto">
-                        Những công nghệ và công cụ tôi sử dụng để biến ý tưởng thành hiện thực
+                    <p data-aos="fade-up" class="text-slate-400 max-w-2xl mx-auto">
+                        The technologies and tools I use to turn ideas into reality
                     </p>
                 </div>
 
@@ -427,10 +485,10 @@
             <div class="max-w-6xl mx-auto">
                 <div class="text-center mb-16 animate-fade-in-up">
                     <h2 data-aos="fade-up" class="text-4xl lg:text-5xl font-bold mb-6">
-                        <span class="text-gradient">Dự Án Tiêu Biểu</span>
+                        <span class="text-gradient">Featured Projects</span>
                     </h2>
                     <p data-aos="fade-up" class="text-xl text-slate-400 max-w-2xl mx-auto">
-                        Một số dự án mà tôi đã thực hiện với tình yêu và sự tận tâm
+                        Some projects I have done with love and devotion
                     </p>
                 </div>
 
@@ -555,6 +613,127 @@
                             </div>
                         </div>
                     </div>
+
+                    <!-- Project 4 -->
+                     <div data-aos="flip-left" data-aos-duration="1000" data-aos-delay="200" class="group project-card glass-effect  rounded-3xl overflow-hidden"
+                    style="animation-delay: 0.1s;">
+                        <div class="relative h-48 bg-gradient-secondary overflow-hidden">
+                            <!-- <div class="absolute inset-0 flex items-center justify-center">
+                                <i class="fas fa-comments text-6xl text-white opacity-80 group-hover:scale-110 transition-transform duration-300 floating"></i>
+                            </div>
+                            <div class="absolute top-4 right-4">
+                                <span
+                                    class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">Completed</span>
+                            </div> -->
+                            <img src="./static/images/car-rental.png" alt="chat-app real time">
+                        </div>
+                        <div class="p-8">
+                            <h3 class="text-2xl font-bold mb-4 text-purple-400">Car rental</h3>
+                            <p class="text-gray-300 mb-6 leading-relaxed">
+                                The current instant messaging platform is a modern web application,
+                                 powered by Socket.IO for real-time messaging.
+                            </p>
+                            <div class="flex flex-wrap gap-2 mb-6">
+                                <span class="bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full text-sm">Java</span>
+                                <span class="bg-green-500/20 text-green-300 px-3 py-1 rounded-full text-sm">Spring boot</span>
+                                <span class="bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full text-sm">Sql server</span>
+                                
+                            </div>
+                            <div class="flex space-x-4">
+                                <button
+                                    onclick="showProjectDemo('ChatApp Real Time', 'https://github.com/Starlightll/PJB_JAVA_02_RentalCar','https://github.com/Starlightll/PJB_JAVA_02_RentalCar')"
+                                    class="flex-1 bg-gradient-primary text-white py-3 rounded-xl font-medium hover-glow transition-all duration-300">
+                                    <i class="fas fa-external-link-alt mr-2"></i>Demo
+                                </button>
+
+                                <button
+                                    class="w-12 h-12 glass rounded-xl flex items-center justify-center hover:bg-slate-600 transition-colors">
+                                    <i class="fab fa-github text-slate-300"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- Project 5 -->
+                     <div data-aos="flip-left" data-aos-duration="1000" data-aos-delay="400" class="group project-card glass-effect  rounded-3xl overflow-hidden"
+                    style="animation-delay: 0.1s;">
+                        <div class="relative h-48 bg-gradient-secondary overflow-hidden">
+                            <!-- <div class="absolute inset-0 flex items-center justify-center">
+                                <i class="fas fa-comments text-6xl text-white opacity-80 group-hover:scale-110 transition-transform duration-300 floating"></i>
+                            </div>
+                            <div class="absolute top-4 right-4">
+                                <span
+                                    class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">Completed</span>
+                            </div> -->
+                            <img src="./static/images/online-learning.png" alt="chat-app real time">
+                        </div>
+                        <div class="p-8">
+                            <h3 class="text-2xl font-bold mb-4 text-purple-400">Online Learning</h3>
+                            <p class="text-gray-300 mb-6 leading-relaxed">
+                                The current instant messaging platform is a modern web application,
+                                 powered by Socket.IO for real-time messaging.
+                            </p>
+                            <div class="flex flex-wrap gap-2 mb-6">
+                                <span class="bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full text-sm">Java</span>
+                                <span class="bg-green-500/20 text-green-300 px-3 py-1 rounded-full text-sm">Jsp</span>
+                                <span class="bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full text-sm">Serverlet</span>
+                                
+                            </div>
+                            <div class="flex space-x-4">
+                                <button
+                                    onclick="showProjectDemo('ChatApp Real Time', 'https://github.com/Steve-HaTrong/Project_E-Learning')"
+                                    class="flex-1 bg-gradient-primary text-white py-3 rounded-xl font-medium hover-glow transition-all duration-300">
+                                    <i class="fas fa-external-link-alt mr-2"></i>Demo
+                                </button>
+
+                                <button
+                                    class="w-12 h-12 glass rounded-xl flex items-center justify-center hover:bg-slate-600 transition-colors">
+                                    <i class="fab fa-github text-slate-300"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Project 6 -->
+                     <div data-aos="flip-left" data-aos-duration="1000" data-aos-delay="600" class="group project-card glass-effect  rounded-3xl overflow-hidden"
+                    style="animation-delay: 0.1s;">
+                        <div class="relative h-48 bg-gradient-secondary overflow-hidden">
+                            <!-- <div class="absolute inset-0 flex items-center justify-center">
+                                <i class="fas fa-comments text-6xl text-white opacity-80 group-hover:scale-110 transition-transform duration-300 floating"></i>
+                            </div>
+                            <div class="absolute top-4 right-4">
+                                <span
+                                    class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">Completed</span>
+                            </div> -->
+                            <img src="./static/images/shopping-online.png" alt="chat-app real time">
+                        </div>
+                        <div class="p-8">
+                            <h3 class="text-2xl font-bold mb-4 text-purple-400">Online Shopping</h3>
+                            <p class="text-gray-300 mb-6 leading-relaxed">
+                                The current instant messaging platform is a modern web application,
+                                 powered by Socket.IO for real-time messaging.
+                            </p>
+                            <div class="flex flex-wrap gap-2 mb-6">
+                                <span class="bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full text-sm">Java</span>
+                                <span class="bg-green-500/20 text-green-300 px-3 py-1 rounded-full text-sm">Jsp</span>
+                                <span class="bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full text-sm">Serverlet</span>
+                                
+                            </div>
+                            <div class="flex space-x-4">
+                                <button
+                                    onclick="showProjectDemo('Online Shopping', 'https://github.com/AnhNT110723/projectOnlineShoping', 'https://www.canva.com/design/DAF_6zp58m0/6a_x7uYLeR7Wg6IO4XCURw/edit?utm_content=DAF_6zp58m0&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton')"
+                                    class="flex-1 bg-gradient-primary text-white py-3 rounded-xl font-medium hover-glow transition-all duration-300">
+                                    <i class="fas fa-external-link-alt mr-2"></i>Demo
+                                </button>
+
+                                <button
+                                    class="w-12 h-12 glass rounded-xl flex items-center justify-center hover:bg-slate-600 transition-colors">
+                                    <i class="fab fa-github text-slate-300"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <!-- View All Projects Button -->
@@ -571,7 +750,7 @@
         <!-- Education Section -->
     <section id="education" class="py-20 bg-gray-900">
         <div class="container mx-auto px-6">
-            <h2 data-aos="fade-up" class="text-5xl font-bold text-center mb-16 text-gradient">Học Vấn & Chứng Chỉ</h2>
+            <h2 data-aos="fade-up" class="text-5xl font-bold text-center mb-16 text-gradient">Education & Certifications    </h2>
             <div class="max-w-4xl mx-auto">
                 <!-- Timeline -->
                 <div class="relative">
@@ -586,10 +765,10 @@
                                 </div>
                                 <div class="flex-1">
                                     <div class="flex flex-wrap items-center gap-4 mb-4">
-                                        <h3 class="text-2xl font-bold text-white">Đại học FPT Hà Nội</h3>
-                                        <span class="bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full text-sm border border-blue-500/30">2017 - 2021</span>
+                                        <h3 class="text-2xl font-bold text-white">FPT University Hanoi</h3>
+                                        <span class="bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full text-sm border border-blue-500/30">2021 - 2025</span>
                                     </div>
-                                    <p class="text-xl text-gray-300 mb-4">Cử nhân Kỹ thuật Phần mềm</p>
+                                    <p class="text-xl text-gray-300 mb-4">Bachelor of Software Engineering</p>
                                     <div class="grid md:grid-cols-2 gap-6">
                                         <div>
                                             <p class="text-gray-400 mb-2"><i class="fas fa-medal mr-2 text-yellow-400"></i><strong>GPA:</strong> 3.8/4.0 ()</p>
@@ -597,7 +776,7 @@
                                             <p class="text-gray-400"><i class="fas fa-award mr-2 text-yellow-400"></i><strong>Học bổng:</strong> Tài năng HUST</p> -->
                                         </div>
                                         <div>
-                                            <h4 class="font-semibold text-white mb-3">Môn học chuyên sâu:</h4>
+                                            <h4 class="font-semibold text-white mb-3">Specialized subjects:</h4>
                                             <ul class="text-gray-300 space-y-1">
                                                 <li>• Algorithms & Data Structures</li>
                                                 <li>• Software Architecture</li>
@@ -665,7 +844,7 @@
     </section>
 
     <!-- Contact Section -->
-    <section id="contact" class="py-20 bg-slate-900">
+    <section id="contact" class="py-20 bg-slate-800">
         <div class="container mx-auto px-6">
             <div class="max-w-4xl mx-auto">
                 <div class="text-center mb-16 animate-fade-in-up">
@@ -679,7 +858,7 @@
 
                 <div class="grid lg:grid-cols-2 gap-12">
                     <!-- Contact Info -->
-                    <div class="space-y-8 animate-slide-in-left">
+                    <div class="space-y-8" data-aos="fade-right" data-aos-duration="1000" data-aos-delay="200">
                         <div class="glass rounded-3xl p-8">
                             <h3 class="text-2xl font-bold mb-8 text-center">
                                 <i class="fas fa-address-card mr-3 text-blue-400"></i>Thông Tin Liên Hệ
@@ -750,7 +929,7 @@
                     </div>
 
                     <!-- Contact Form -->
-                    <div class="animate-slide-in-right">
+                    <div class="" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="200">
                         <div class="glass rounded-3xl p-8">
                             <h3 class="text-2xl font-bold mb-8 text-center">
                                 <i class="fas fa-paper-plane mr-3 text-purple-400"></i>Gửi Tin Nhắn
@@ -798,7 +977,7 @@
     </section>
 
     <!-- Footer -->
-    <footer class="bg-slate-800 py-12 border-t border-slate-700">
+    <footer class="py-12 border-t border-slate-700">
         <div class="container mx-auto px-6">
             <div class="max-w-4xl mx-auto text-center">
                 <div class="mb-8">
@@ -876,7 +1055,7 @@
     </div> -->
 
     <script>
-                // Initialize AOS
+        // Initialize AOS
         AOS.init({
             duration: 1000,
             once: true,
