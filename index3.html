@@ -1,0 +1,1269 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <title>TOEIC Staff • UC-17→UC-22 • Sidebar luôn bật/tắt</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark light">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root{
+      --sbw-expanded: 18rem; /* 72 */
+      --sbw-collapsed: 4.5rem; /* 18 */
+    }
+    /* App background */
+    body{ background-image: linear-gradient(135deg,#0b0f2a 0%,#07112f 50%,#05283a 100%); }
+    /* Sidebar base + transitions */
+    #sidebar{
+      width: var(--sbw-expanded);
+      transition: width .25s ease, transform .25s ease;
+      z-index: 40;
+    }
+    #sidebar[data-collapsed="true"]{ width: var(--sbw-collapsed); }
+    #sidebar[data-collapsed="true"] .nav-label,
+    #sidebar[data-collapsed="true"] .brand-text,
+    #sidebar[data-collapsed="true"] .section-title{
+      display: none;
+    }
+    #sidebar .nav:hover{ background: rgba(255,255,255,.08); }
+    /* Rail tooltips when collapsed */
+    #sidebar[data-collapsed="true"] .nav{ position: relative; }
+    #sidebar[data-collapsed="true"] .nav:hover .nav-label-tip{
+      opacity: 1; transform: translateX(0);
+    }
+    .nav-label-tip{
+      position: absolute; left: calc(100% + .5rem); top: 50%; transform: translateY(-50%) translateX(-6px);
+      opacity: 0; transition: .2s ease;
+      white-space: nowrap;
+    }
+    /* Off-canvas behavior for very small screens (smaller than 640px) when expanded */
+    @media (max-width: 639.98px){
+      #sidebar[data-overlay="true"]{
+        position: fixed; left: 0; top: 0; bottom: 0;
+        transform: translateX(0);
+      }
+      #sidebar[data-overlay="true"][data-collapsed="false"]{ box-shadow: 0 10px 40px rgba(0,0,0,.45); }
+      /* When collapsed in overlay mode, slide out to rail to still be tappable; keep it visible a bit */
+      #sidebar[data-overlay="true"][data-collapsed="true"]{ transform: translateX(-70%); }
+    }
+    /* Scrim overlay for mobile when sidebar expanded */
+    #scrim{ position: fixed; inset: 0; background: rgba(2,6,23,.55); backdrop-filter: blur(2px); z-index: 30; display: none; }
+    #scrim.show{ display: block; }
+
+    /* Header compact mode */
+    body[data-compact-header="true"] #topbar{ padding-top: .5rem; padding-bottom: .5rem; }
+    body[data-compact-header="true"] #pageTitle{ font-size: 1.1rem; }
+    /* Visual helpers */
+    .glass { background: rgba(255,255,255,.08); border: 1px solid rgba(255,255,255,.12); backdrop-filter: blur(10px); }
+    .btn { @apply inline-flex items-center gap-2 px-3 py-2 rounded-lg font-semibold transition active:scale-95; }
+    .btn-primary { @apply bg-cyan-500 hover:bg-cyan-400 text-slate-900; }
+    .btn-soft { @apply bg-white/10 hover:bg-white/20 text-white; }
+    .chip { @apply px-2.5 py-1 rounded-full text-xs font-semibold; }
+    .chip-green { @apply bg-emerald-500/20 text-emerald-300; }
+    .chip-amber { @apply bg-amber-500/20 text-amber-300; }
+    .chip-slate { @apply bg-slate-500/20 text-slate-200; }
+    .input { @apply w-full px-3.5 py-2.5 rounded-lg bg-white/5 border border-white/10 text-slate-100 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-cyan-400/60; }
+    .label { @apply text-sm font-medium text-slate-200; }
+    .card { @apply glass rounded-2xl p-5; }
+    .card-hover { @apply transition hover:-translate-y-0.5 hover:shadow-xl hover:shadow-cyan-500/10; }
+  </style>
+</head>
+<body class="min-h-screen text-slate-100 selection:bg-cyan-500 selection:text-slate-900">
+
+  <!-- Scrim for mobile overlay -->
+  <div id="scrim"></div>
+
+  <!-- App Shell -->
+  <div class="min-h-screen flex">
+
+    <!-- Sidebar (always toggleable at any screen size) -->
+    <aside id="sidebar" class="glass flex flex-col border-r border-white/10" data-collapsed="false" data-overlay="true">
+      <div class="px-3 py-3 border-b border-white/10 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="h-9 w-9 rounded-xl bg-gradient-to-tr from-cyan-400 to-emerald-400 flex items-center justify-center text-slate-900 font-extrabold">T</div>
+          <div class="brand-text">
+            <div class="text-base font-bold leading-tight">TOEIC Staff</div>
+            <div class="text-xs text-slate-400">Bảng điều khiển</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-1">
+          <button id="btnCollapseSidebar" class="btn btn-soft px-2 py-1" title="Thu gọn/Mở rộng">
+            <svg viewBox="0 0 24 24" class="w-5 h-5"><path d="M4 12h16M10 6l-6 6 6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+      </div>
+
+      <nav class="p-2 flex-1 overflow-y-auto">
+        <div class="section-title mb-1 px-2 text-xs uppercase tracking-wide text-slate-400">Điều hướng</div>
+
+        <button data-view="classes" class="nav w-full flex items-center gap-3 px-3 py-2 rounded-xl" title="Lớp học">
+          <svg viewBox="0 0 24 24" class="w-5 h-5"><path d="M3 6.5l9-4 9 4-9 4-9-4Z" stroke="currentColor" stroke-width="1.5"/><path d="M5 10v6.5c0 .7.4 1.3 1 1.6l6 3 6-3c.6-.3 1-.9 1-1.6V10" stroke="currentColor" stroke-width="1.5"/></svg>
+          <span class="nav-label">Lớp học</span>
+          <span class="nav-label-tip glass px-2 py-1 rounded-md text-xs">Lớp học</span>
+        </button>
+
+        <button data-view="questions" class="nav w-full flex items-center gap-3 px-3 py-2 rounded-xl" title="Ngân hàng câu hỏi">
+          <svg viewBox="0 0 24 24" class="w-5 h-5"><path d="M4 6h16M4 12h16M4 18h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <span class="nav-label">Ngân hàng câu hỏi</span>
+          <span class="nav-label-tip glass px-2 py-1 rounded-md text-xs">Ngân hàng câu hỏi</span>
+        </button>
+
+        <button data-view="homeworks" class="nav w-full flex items-center gap-3 px-3 py-2 rounded-xl" title="Bài tập">
+          <svg viewBox="0 0 24 24" class="w-5 h-5"><path d="M7 3h10a2 2 0 0 1 2 2v14l-7-3-7 3V5a2 2 0 0 1 2-2Z" stroke="currentColor" stroke-width="1.5"/></svg>
+          <span class="nav-label">Bài tập</span>
+          <span class="nav-label-tip glass px-2 py-1 rounded-md text-xs">Bài tập</span>
+        </button>
+
+        <button data-view="students" class="nav w-full flex items-center gap-3 px-3 py-2 rounded-xl" title="Học viên">
+          <svg viewBox="0 0 24 24" class="w-5 h-5"><path d="M12 12a5 5 0 1 0-5-5 5 5 0 0 0 5 5Zm8 9a8 8 0 1 0-16 0" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <span class="nav-label">Học viên</span>
+          <span class="nav-label-tip glass px-2 py-1 rounded-md text-xs">Học viên</span>
+        </button>
+
+        <button data-view="reports" class="nav w-full flex items-center gap-3 px-3 py-2 rounded-xl" title="Báo cáo">
+          <svg viewBox="0 0 24 24" class="w-5 h-5"><path d="M6 20V9m6 11V4m6 16v-7" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+          <span class="nav-label">Báo cáo</span>
+          <span class="nav-label-tip glass px-2 py-1 rounded-md text-xs">Báo cáo</span>
+        </button>
+
+        <div class="mt-3 mb-1 px-2 section-title text-xs uppercase tracking-wide text-slate-400">Lớp của tôi</div>
+        <div id="sidebarClassList" class="px-1 pb-3 space-y-1 max-h-[40vh] overflow-y-auto"></div>
+      </nav>
+
+      <div class="mt-auto p-3 border-t border-white/10">
+        <div class="glass rounded-xl p-3 flex items-center gap-3">
+          <div class="h-10 w-10 rounded-full bg-gradient-to-tr from-amber-400 to-rose-400 text-slate-900 flex items-center justify-center font-bold">NV</div>
+          <div class="text-sm brand-text">
+            <div class="font-semibold">Nhân viên</div>
+            <div class="text-slate-400">Demo</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <div class="flex-1 flex flex-col">
+      <!-- Topbar (always shows toggles) -->
+      <header id="topbar" class="glass px-4 py-3 border-b border-white/10 sticky top-0 z-20">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <button id="btnToggleSidebar" class="btn btn-soft" title="Thu gọn/Mở rộng sidebar (Ctrl+B)">
+              <svg viewBox="0 0 24 24" class="w-5 h-5"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            </button>
+            <button id="btnToggleHeader" class="btn btn-soft" title="Đổi chế độ header (gọn/dày)">
+              <svg viewBox="0 0 24 24" class="w-5 h-5"><path d="M8 7h8M6 12h12M8 17h8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+            </button>
+            <h1 id="pageTitle" class="text-lg md:text-xl font-bold tracking-tight ml-1">Lớp học</h1>
+            <span id="viewBadge" class="chip chip-slate ml-2">Classes</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <div class="relative hidden sm:block">
+              <input id="globalSearch" class="input w-72 pl-10" placeholder="Tìm kiếm nhanh...">
+              <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none">
+                <svg viewBox="0 0 24 24" class="w-5 h-5"><path d="M11 4a7 7 0 1 1 0 14 7 7 0 0 1 0-14Zm7 14 3 3" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+              </span>
+            </div>
+            <button id="btnInviteGlobal" class="btn btn-soft">
+              <svg viewBox="0 0 24 24" class="w-5 h-5"><path d="M12 6v12M6 12h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              <span class="hidden xs:inline">Mời học viên</span>
+            </button>
+            <button id="btnNewHW" class="btn btn-primary">
+              <svg viewBox="0 0 24 24" class="w-5 h-5"><path d="M12 6v12M6 12h12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+              <span class="hidden xs:inline">Tạo/Giao bài tập</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <!-- Content -->
+      <main class="flex-1 p-3 md:p-6">
+        <div class="max-w-7xl mx-auto space-y-4 md:space-y-6">
+
+          <!-- View: Classes -->
+          <section id="view-classes" class="space-y-4">
+            <div class="card">
+              <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                <div class="md:col-span-2">
+                  <label class="label">Tìm lớp</label>
+                  <input id="classSearch" class="input mt-1" placeholder="Tên lớp, giảng viên...">
+                </div>
+                <div>
+                  <label class="label">Trạng thái</label>
+                  <select id="classFilter" class="input mt-1">
+                    <option value="">Tất cả</option>
+                    <option value="Đang diễn ra">Đang diễn ra</option>
+                    <option value="Chuẩn bị">Chuẩn bị</option>
+                    <option value="Kết thúc">Kết thúc</option>
+                  </select>
+                </div>
+                <div class="flex items-end">
+                  <button class="btn btn-soft w-full" id="btnQuickInvite">Mời học viên (mã/email)</button>
+                </div>
+              </div>
+            </div>
+            <div id="classList" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3"></div>
+          </section>
+
+          <!-- View: Class Detail -->
+          <section id="view-class-detail" class="space-y-4 hidden">
+            <div class="flex items-center justify-between">
+              <div class="flex items-center gap-3">
+                <button id="btnBackToClasses" class="btn btn-soft">
+                  <svg viewBox="0 0 24 24" class="w-5 h-5"><path d="M15 6 9 12l6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  Lớp học
+                </button>
+                <div class="text-xl font-bold" id="clsTitle">Tên lớp</div>
+                <span id="clsStatus" class="chip chip-slate">Trạng thái</span>
+              </div>
+              <div class="flex gap-2">
+                <button id="btnInviteInClass" class="btn btn-soft">Mời học viên</button>
+                <button id="btnAssignHW" class="btn btn-primary">Tạo/Giao bài tập</button>
+              </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="glass rounded-xl p-2 inline-flex gap-1">
+              <button data-ctab="overview" class="ctab px-4 py-2 rounded-lg bg-white/10">Tổng quan</button>
+              <button data-ctab="students" class="ctab px-4 py-2 rounded-lg hover:bg-white/10">Học viên</button>
+              <button data-ctab="homeworks" class="ctab px-4 py-2 rounded-lg hover:bg-white/10">Bài tập</button>
+              <button data-ctab="invite" class="ctab px-4 py-2 rounded-lg hover:bg-white/10">Mời</button>
+            </div>
+
+            <!-- Overview -->
+            <div id="cls-tab-overview" class="space-y-4">
+              <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                <div class="card card-hover">
+                  <div class="text-slate-300 text-sm">Điểm trung bình</div>
+                  <div id="clsAvgScore" class="text-3xl font-bold mt-1">-</div>
+                </div>
+                <div class="card card-hover">
+                  <div class="text-slate-300 text-sm">Số học viên</div>
+                  <div id="clsStudentCount" class="text-3xl font-bold mt-1">-</div>
+                </div>
+                <div class="card card-hover">
+                  <div class="text-slate-300 text-sm">Bài tập đang mở</div>
+                  <div id="clsHwOpen" class="text-3xl font-bold mt-1">-</div>
+                </div>
+                <div class="card card-hover">
+                  <div class="text-slate-300 text-sm">Hạn sắp tới</div>
+                  <div id="clsNextDue" class="text-lg font-semibold mt-1">-</div>
+                </div>
+              </div>
+
+              <div class="grid grid-cols-1 xl:grid-cols-3 gap-3">
+                <div class="card xl:col-span-2 card-hover">
+                  <div class="flex items-center justify-between mb-2">
+                    <div class="text-sm text-slate-300">Xu hướng điểm (bài tập gần đây)</div>
+                  </div>
+                  <svg id="clsTrend" viewBox="0 0 600 200" class="w-full h-56 rounded-lg bg-white/5 border border-white/10"></svg>
+                </div>
+                <div class="card card-hover">
+                  <div class="text-sm text-slate-300">Điểm yếu chung</div>
+                  <div id="clsWeaknesses" class="mt-3 grid grid-cols-2 gap-2"></div>
+                </div>
+              </div>
+
+              <div class="card card-hover">
+                <div class="flex items-center justify-between mb-3">
+                  <div class="text-sm font-semibold">Chia sẻ mã mời</div>
+                  <button id="btnCopyInvite" class="btn btn-soft text-sm">Sao chép</button>
+                </div>
+                <div class="flex items-center gap-3">
+                  <div class="font-mono text-lg bg-white/5 px-3 py-1.5 rounded-lg border border-white/10" id="clsInviteCode">-</div>
+                  <div class="text-xs text-slate-300">Gửi mã này cho học viên để tham gia lớp.</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Students -->
+            <div id="cls-tab-students" class="space-y-4 hidden">
+              <div class="card">
+                <div class="flex flex-col md:flex-row md:items-end gap-3">
+                  <div class="flex-1">
+                    <label class="label">Tìm học viên</label>
+                    <input id="clsStudentSearch" class="input mt-1" placeholder="Tên, email...">
+                  </div>
+                  <button id="btnInviteFromStudents" class="btn btn-primary">Mời thêm</button>
+                </div>
+              </div>
+              <div id="clsStudentList" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3"></div>
+            </div>
+
+            <!-- Homeworks -->
+            <div id="cls-tab-homeworks" class="space-y-4 hidden">
+              <div class="card flex items-center justify-between">
+                <div class="text-sm text-slate-300">Bài tập của lớp</div>
+                <button id="btnAssignFromTab" class="btn btn-primary">Tạo/Giao bài tập</button>
+              </div>
+              <div id="clsHwList" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3"></div>
+            </div>
+
+            <!-- Invite -->
+            <div id="cls-tab-invite" class="space-y-4 hidden">
+              <div class="card">
+                <div class="text-sm text-slate-300 mb-2">Mời bằng mã hoặc email</div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <div class="md:col-span-1">
+                    <div class="label mb-1">Mã mời</div>
+                    <div class="flex items-center gap-2">
+                      <div id="clsInviteCode2" class="font-mono bg-white/5 px-3 py-2 rounded-lg border border-white/10">-</div>
+                      <button id="btnCopyInvite2" class="btn btn-soft text-sm">Sao chép</button>
+                    </div>
+                  </div>
+                  <div class="md:col-span-2">
+                    <div class="label mb-1">Danh sách email (phân tách dấu phẩy)</div>
+                    <form id="formInviteEmails" class="flex gap-2" onsubmit="return false;">
+                      <input id="inviteEmailsInput" class="input flex-1" placeholder="vd: a@x.com, b@y.com">
+                      <button id="btnSendInvites" class="btn btn-primary">Thêm vào lớp</button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- View: Questions -->
+          <section id="view-questions" class="space-y-4 hidden">
+            <div class="card">
+              <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+                <div class="md:col-span-2">
+                  <label class="label">Tìm câu hỏi</label>
+                  <input id="qSearch" class="input mt-1" placeholder="Từ khóa, nội dung...">
+                </div>
+                <div>
+                  <label class="label">Phần</label>
+                  <select id="qPart" class="input mt-1">
+                    <option value="">Tất cả</option>
+                    <option value="1">Part 1</option>
+                    <option value="2">Part 2</option>
+                    <option value="3">Part 3</option>
+                    <option value="4">Part 4</option>
+                    <option value="5">Part 5</option>
+                    <option value="6">Part 6</option>
+                    <option value="7">Part 7</option>
+                  </select>
+                </div>
+                <div class="flex items-end">
+                  <button id="btnOpenHWBuilder" class="btn btn-primary w-full">Tạo bài tập từ chọn</button>
+                </div>
+              </div>
+            </div>
+            <div id="qList" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3"></div>
+          </section>
+
+          <!-- View: Homeworks -->
+          <section id="view-homeworks" class="space-y-4 hidden">
+            <div class="card flex items-center justify-between">
+              <div class="text-sm text-slate-300">Tất cả bài tập</div>
+              <button id="btnNewHW2" class="btn btn-primary">Tạo/Giao bài tập</button>
+            </div>
+            <div id="hwListGlobal" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3"></div>
+          </section>
+
+          <!-- View: Students -->
+          <section id="view-students" class="space-y-4 hidden">
+            <div class="card">
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div class="md:col-span-2">
+                  <label class="label">Tìm học viên</label>
+                  <input id="studentSearch" class="input mt-1" placeholder="Tên, email, lớp...">
+                </div>
+                <div class="flex items-end">
+                  <button id="btnInviteGlobal2" class="btn btn-soft w-full">Mời vào lớp</button>
+                </div>
+              </div>
+            </div>
+            <div id="studentListGlobal" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3"></div>
+          </section>
+
+          <!-- View: Reports -->
+          <section id="view-reports" class="space-y-4 hidden">
+            <div class="grid grid-cols-1 xl:grid-cols-3 gap-3">
+              <div class="card">
+                <div class="text-sm text-slate-300">Tỉ lệ hoàn thành bài tập</div>
+                <div class="flex items-center justify-center mt-4">
+                  <svg id="repDonut" viewBox="0 0 120 120" class="w-40 h-40">
+                    <circle cx="60" cy="60" r="50" stroke="rgba(255,255,255,.15)" stroke-width="14" fill="none"/>
+                    <circle id="repDonutVal" cx="60" cy="60" r="50" stroke="url(#grad1)" stroke-linecap="round" stroke-width="14" fill="none" stroke-dasharray="0 999" transform="rotate(-90 60 60)"/>
+                    <defs>
+                      <linearGradient id="grad1" x1="0" x2="1">
+                        <stop offset="0%" stop-color="#22d3ee"/>
+                        <stop offset="100%" stop-color="#34d399"/>
+                      </linearGradient>
+                    </defs>
+                  </svg>
+                </div>
+                <div id="repDonutLabel" class="text-center font-semibold text-lg mt-2">-</div>
+              </div>
+              <div class="card xl:col-span-2">
+                <div class="text-sm text-slate-300 mb-2">Phân bố điểm trung bình theo phần</div>
+                <svg id="repBars" viewBox="0 0 600 220" class="w-full h-56 rounded-lg bg-white/5 border border-white/10"></svg>
+              </div>
+            </div>
+          </section>
+
+          <!-- View: Student Detail -->
+          <section id="view-student-detail" class="space-y-4 hidden">
+            <div class="flex items-center justify-between">
+              <button id="btnBackFromStudent" class="btn btn-soft">
+                <svg viewBox="0 0 24 24" class="w-5 h-5"><path d="M15 6 9 12l6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Trở lại
+              </button>
+              <div class="text-xl font-bold" id="stdTitle">Học viên</div>
+              <div></div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+              <div class="card">
+                <div class="text-sm text-slate-300">Điểm trung bình</div>
+                <div id="stdAvg" class="text-3xl font-bold mt-1">-</div>
+                <div id="stdClass" class="text-slate-300 text-sm mt-1">-</div>
+              </div>
+              <div class="card md:col-span-2">
+                <div class="text-sm text-slate-300 mb-2">Xu hướng điểm theo bài tập</div>
+                <svg id="stdTrend" viewBox="0 0 600 200" class="w-full h-56 rounded-lg bg-white/5 border border-white/10"></svg>
+              </div>
+            </div>
+            <div class="card">
+              <div class="text-sm text-slate-300 mb-2">Điểm theo phần</div>
+              <svg id="stdBars" viewBox="0 0 600 220" class="w-full h-56 rounded-lg bg-white/5 border border-white/10"></svg>
+            </div>
+            <div class="card">
+              <div class="text-sm font-semibold mb-2">Bài tập gần đây</div>
+              <div id="stdHwList" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3"></div>
+            </div>
+          </section>
+
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <!-- Modals -->
+  <!-- Invite -->
+  <div id="modal-invite" class="hidden">
+    <div class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-40"></div>
+    <div class="fixed z-50 inset-x-4 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 top-16 max-w-3xl w-auto">
+      <div class="card">
+        <div class="flex items-center justify-between">
+          <div class="text-lg font-semibold">Mời học viên vào lớp</div>
+          <button type="button" data-close="modal-invite" class="btn btn-soft">Đóng</button>
+        </div>
+        <div class="mt-3 grid grid-cols-1 md:grid-cols-3 gap-3">
+          <div>
+            <div class="label">Lớp</div>
+            <select id="inviteClassSelect" class="input mt-1"></select>
+          </div>
+          <div class="md:col-span-2">
+            <div class="label">Mã mời</div>
+            <div class="flex items-center gap-2 mt-1">
+              <div id="inviteCodeShow" class="font-mono bg-white/5 px-3 py-2 rounded-lg border border-white/10">-</div>
+              <button id="btnCopyInviteModal" class="btn btn-soft text-sm">Sao chép</button>
+            </div>
+          </div>
+        </div>
+        <div class="mt-4">
+          <div class="label mb-1">Gửi email mời (phân tách dấu phẩy)</div>
+          <form id="formInvite" onsubmit="return false;" class="flex gap-2">
+            <input id="inviteEmails" class="input flex-1" placeholder="vd: a@x.com, b@y.com">
+            <button id="btnInviteEmails" class="btn btn-primary">Thêm vào lớp</button>
+          </form>
+          <div class="text-xs text-slate-300 mt-2">Mẹo: Dán danh sách email rồi bấm “Thêm vào lớp”.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Homework Builder -->
+  <div id="modal-hw" class="hidden">
+    <div class="fixed inset-0 bg-slate-900/70 backdrop-blur-sm z-40"></div>
+    <div class="fixed z-50 inset-x-4 sm:inset-x-auto sm:left-1/2 sm:-translate-x-1/2 top-16 max-w-3xl w-auto">
+      <div class="card">
+        <div class="flex items-center justify-between">
+          <div class="text-lg font-semibold">Tạo/Giao bài tập</div>
+          <button type="button" data-close="modal-hw" class="btn btn-soft">Đóng</button>
+        </div>
+
+        <div class="mt-3 grid grid-cols-3 gap-2 text-sm">
+          <div id="step1" class="text-center py-2 rounded-lg bg-white/10 font-semibold">1. Thông tin</div>
+          <div id="step2" class="text-center py-2 rounded-lg bg-white/5">2. Chọn câu hỏi</div>
+          <div id="step3" class="text-center py-2 rounded-lg bg-white/5">3. Xác nhận</div>
+        </div>
+
+        <div id="hw-step-1" class="mt-4">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div>
+              <label class="label">Chọn lớp</label>
+              <select id="hwClass" class="input mt-1"></select>
+            </div>
+            <div class="md:col-span-2">
+              <label class="label">Tên bài tập</label>
+              <input id="hwName" class="input mt-1" placeholder="VD: Homework 1 - Part 5">
+            </div>
+            <div>
+              <label class="label">Hạn chót</label>
+              <input id="hwDue" type="date" class="input mt-1">
+            </div>
+          </div>
+          <div class="mt-4 flex justify-end">
+            <button id="toStep2" class="btn btn-primary">Tiếp tục</button>
+          </div>
+        </div>
+
+        <div id="hw-step-2" class="mt-4 hidden">
+          <div class="grid grid-cols-1 md:grid-cols-4 gap-3">
+            <div class="md:col-span-2">
+              <label class="label">Tìm câu hỏi</label>
+              <input id="hwQSearch" class="input mt-1" placeholder="Từ khóa, nội dung...">
+            </div>
+            <div>
+              <label class="label">Phần</label>
+              <select id="hwQPart" class="input mt-1">
+                <option value="">Tất cả</option>
+                <option value="1">Part 1</option>
+                <option value="2">Part 2</option>
+                <option value="3">Part 3</option>
+                <option value="4">Part 4</option>
+                <option value="5">Part 5</option>
+                <option value="6">Part 6</option>
+                <option value="7">Part 7</option>
+              </select>
+            </div>
+            <div class="flex items-end">
+              <button id="toStep3" class="btn btn-primary w-full">Xác nhận chọn</button>
+            </div>
+          </div>
+          <div id="hwQList" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3 mt-3"></div>
+        </div>
+
+        <div id="hw-step-3" class="mt-4 hidden">
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+            <div class="card bg-white/5">
+              <div class="text-sm text-slate-300">Lớp</div>
+              <div id="sumClass" class="font-semibold mt-1">-</div>
+            </div>
+            <div class="card bg-white/5">
+              <div class="text-sm text-slate-300">Bài tập</div>
+              <div id="sumName" class="font-semibold mt-1">-</div>
+            </div>
+            <div class="card bg-white/5">
+              <div class="text-sm text-slate-300">Hạn chót</div>
+              <div id="sumDue" class="font-semibold mt-1">-</div>
+            </div>
+          </div>
+          <div class="mt-3 card bg-white/5">
+            <div class="text-sm text-slate-300">Câu hỏi đã chọn</div>
+            <div id="sumQ" class="mt-2 text-sm"></div>
+          </div>
+          <div class="mt-4 flex justify-between">
+            <button id="backTo2" class="btn btn-soft">Quay lại</button>
+            <button id="btnCreateHW" class="btn btn-primary">Giao bài tập</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast -->
+  <div id="toast" class="fixed bottom-4 left-1/2 -translate-x-1/2 hidden z-[60]">
+    <div class="glass rounded-xl px-4 py-2 text-sm border border-white/10"></div>
+  </div>
+
+  <script>
+    // --- State & Sample Data ---
+    const state = {
+      view: 'classes',
+      selectedClassId: null,
+      selectedStudentId: null,
+      selectedQIds: new Set(),
+      classes: [
+        { id: uid('CL'), name: 'TOEIC Foundation A', teacher: 'Nguyễn An', status: 'Đang diễn ra', inviteCode: genInvite(), studentIds: [], homeworkIds: [] },
+        { id: uid('CL'), name: 'TOEIC Intermediate B', teacher: 'Lê Bình', status: 'Chuẩn bị', inviteCode: genInvite(), studentIds: [], homeworkIds: [] },
+      ],
+      students: [
+        { id: uid('ST'), name: 'Trần Minh', email: 'minh@example.com', classId: null },
+        { id: uid('ST'), name: 'Ngọc Anh', email: 'anh@example.com', classId: null },
+        { id: uid('ST'), name: 'Hoàng Long', email: 'long@example.com', classId: null },
+        { id: uid('ST'), name: 'Thu Hà', email: 'ha@example.com', classId: null },
+      ],
+      questions: [
+        { id: uid('Q'), part: '5', level: 'Trung bình', content: 'Chọn từ đúng để hoàn thành câu (1).' },
+        { id: uid('Q'), part: '5', level: 'Dễ', content: 'Chọn từ đúng để hoàn thành câu (2).' },
+        { id: uid('Q'), part: '7', level: 'Khó', content: 'Đọc đoạn văn ngắn và trả lời câu hỏi.' },
+        { id: uid('Q'), part: '2', level: 'Dễ', content: 'Chọn phản hồi phù hợp cho câu hỏi.' },
+        { id: uid('Q'), part: '3', level: 'Trung bình', content: 'Chọn đáp án đúng sau khi nghe hội thoại.' },
+        { id: uid('Q'), part: '1', level: 'Dễ', content: 'Chọn mô tả đúng phù hợp với bức ảnh.' },
+        { id: uid('Q'), part: '6', level: 'Trung bình', content: 'Điền từ còn thiếu vào đoạn văn.' },
+        { id: uid('Q'), part: '4', level: 'Trung bình', content: 'Chọn đáp án đúng sau khi nghe bài nói.' },
+      ],
+      homeworks: []
+    };
+
+    // Seed: attach some students to class A
+    attachStudentToClass(state.students[0].id, state.classes[0].id);
+    attachStudentToClass(state.students[1].id, state.classes[0].id);
+    attachStudentToClass(state.students[2].id, state.classes[0].id);
+
+    // Sample homework with mock submissions
+    const sampleHW = createHomework({
+      classId: state.classes[0].id,
+      name: 'Homework 1 - Part 5',
+      due: plusDays(5),
+      questionIds: state.questions.filter(q=>q.part==='5').slice(0,2).map(q=>q.id)
+    });
+    state.homeworks.push(sampleHW);
+    state.classes[0].homeworkIds.push(sampleHW.id);
+
+    // --- Utils ---
+    function uid(prefix='ID'){ return `${prefix}-${Math.random().toString(36).slice(2,9)}`; }
+    function genInvite(){ return `T-${randStr(4)}-${randStr(4)}`.toUpperCase(); }
+    function randStr(n){ return Math.random().toString(36).slice(2,2+n); }
+    function todayISO(){ const d=new Date(); d.setHours(0,0,0,0); return d.toISOString().slice(0,10); }
+    function plusDays(n=0){ const d=new Date(); d.setDate(d.getDate()+n); d.setHours(0,0,0,0); return d.toISOString().slice(0,10); }
+    function showToast(msg){ const t=document.querySelector('#toast'); t.querySelector('div').textContent=msg; t.classList.remove('hidden'); setTimeout(()=>t.classList.add('hidden'), 2000); }
+    function dateHuman(iso){ const d=new Date(iso+'T00:00:00'); return d.toLocaleDateString('vi-VN',{day:'2-digit',month:'2-digit',year:'numeric'}); }
+    function chipStatus(s){ if(s==='Đang diễn ra') return '<span class="chip chip-green">Đang diễn ra</span>'; if(s==='Chuẩn bị') return '<span class="chip chip-amber">Chuẩn bị</span>'; return '<span class="chip chip-slate">Kết thúc</span>'; }
+    function clamp(n,min,max){return Math.max(min, Math.min(max,n));}
+    function rand(a,b){return Math.floor(Math.random()*(b-a+1))+a;}
+    function copyText(text){
+      if(navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(text).then(()=>showToast('Đã sao chép')); }
+      else { const ta=document.createElement('textarea'); ta.value=text; document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); showToast('Đã sao chép'); }
+    }
+
+    // Attach student to class
+    function attachStudentToClass(studentId, classId){
+      const cls = state.classes.find(c=>c.id===classId);
+      const st = state.students.find(s=>s.id===studentId);
+      if(!cls || !st) return false;
+      if(!cls.studentIds.includes(studentId)) cls.studentIds.push(studentId);
+      st.classId = classId;
+      return true;
+    }
+
+    // Create homework with mock submissions
+    function createHomework({classId, name, due, questionIds}){
+      const hw = { id: uid('HW'), classId, name, due, questionIds: questionIds.slice(), submissions: [] };
+      const cls = state.classes.find(c=>c.id===classId);
+      const parts = {};
+      questionIds.forEach(qid=>{
+        const pq = state.questions.find(q=>q.id===qid)?.part || '5';
+        parts[pq] = (parts[pq]||0) + 1;
+      });
+      (cls?.studentIds||[]).forEach(stId=>{
+        const base = rand(55,85);
+        const perPart = {};
+        Object.keys(parts).forEach(p=>{
+          perPart[p] = clamp(Math.round(base + (Math.random()-0.5)*20), 30, 100);
+        });
+        hw.submissions.push({
+          id: uid('SB'),
+          studentId: stId,
+          score: clamp(Math.round(base + (Math.random()-0.5)*15), 30, 100),
+          perPart
+        });
+      });
+      return hw;
+    }
+
+    // --- Rendering shell extras (sidebar list) ---
+    function renderSidebarClasses(){
+      const wrap = document.getElementById('sidebarClassList');
+      wrap.innerHTML = '';
+      state.classes.forEach(c=>{
+        const btn = document.createElement('button');
+        btn.className = 'w-full flex items-center gap-2 px-2.5 py-2 rounded-lg hover:bg-white/10 text-left';
+        btn.setAttribute('title', c.name);
+        btn.innerHTML = `
+          <div class="h-6 w-6 rounded-md bg-white/10 flex items-center justify-center text-xs font-bold">${abbr(c.name)}</div>
+          <div class="nav-label flex-1 truncate">${c.name}</div>
+        `;
+        btn.onclick = ()=>{ state.selectedClassId = c.id; setView('class-detail'); };
+        wrap.appendChild(btn);
+      });
+    }
+    function abbr(name){ return name.split(' ').map(x=>x[0]).join('').slice(0,3).toUpperCase(); }
+
+    // --- Views Rendering ---
+    function setView(v){
+      state.view = v;
+      document.querySelectorAll('[id^="view-"]').forEach(sec=>sec.classList.add('hidden'));
+      document.getElementById('view-'+v).classList.remove('hidden');
+      const titleMap = {
+        classes:'Lớp học', 'class-detail':'Chi tiết lớp', questions:'Ngân hàng câu hỏi',
+        homeworks:'Bài tập', students:'Học viên', reports:'Báo cáo', 'student-detail':'Báo cáo học viên'
+      };
+      const badgeMap = {
+        classes:'Classes', 'class-detail':'Class Dashboard', questions:'Question Bank',
+        homeworks:'Homeworks', students:'Students', reports:'Reports', 'student-detail':'Student Report'
+      };
+      document.getElementById('pageTitle').textContent = titleMap[v] || 'TOEIC Staff';
+      document.getElementById('viewBadge').textContent = badgeMap[v] || '';
+      document.querySelectorAll('.nav').forEach(n=>{
+        const nv = n.getAttribute('data-view');
+        n.classList.toggle('bg-white/15', nv===v);
+      });
+      renderAll();
+    }
+    function renderAll(){
+      renderSidebarClasses();
+      renderClasses();
+      renderClassDetail();
+      renderQuestions();
+      renderHomeworks();
+      renderStudents();
+      renderReports();
+      renderStudentDetail();
+    }
+
+    function renderClasses(){
+      if(state.view!=='classes') return;
+      const q = (document.getElementById('classSearch')?.value || '').toLowerCase();
+      const f = document.getElementById('classFilter')?.value || '';
+      const list = state.classes.filter(c=>{
+        const okQ = !q || (c.name+c.teacher).toLowerCase().includes(q);
+        const okF = !f || c.status===f;
+        return okQ && okF;
+      });
+      const wrap = document.getElementById('classList'); wrap.innerHTML = '';
+      list.forEach(c=>{
+        const el = document.createElement('div');
+        el.className = 'card card-hover';
+        el.innerHTML = `
+          <div class="flex items-start justify-between">
+            <div>
+              <div class="font-semibold">${c.name}</div>
+              <div class="text-sm text-slate-300 mt-0.5">GV: ${c.teacher}</div>
+              <div class="text-xs text-slate-400 mt-1">Mã mời: <span class="font-mono">${c.inviteCode}</span></div>
+            </div>
+            ${chipStatus(c.status)}
+          </div>
+          <div class="mt-3 flex flex-wrap gap-2">
+            <button class="btn btn-soft" data-act="open" data-id="${c.id}">Mở lớp</button>
+            <button class="btn btn-soft" data-act="invite" data-id="${c.id}">Mời học viên</button>
+            <button class="btn btn-primary" data-act="hw" data-id="${c.id}">Tạo bài tập</button>
+          </div>
+          <div class="mt-3 text-sm text-slate-300">${c.studentIds.length} học viên • ${c.homeworkIds.length} bài tập</div>
+        `;
+        wrap.appendChild(el);
+      });
+      wrap.querySelectorAll('[data-act="open"]').forEach(b=> b.onclick = ()=>{ state.selectedClassId = b.dataset.id; setView('class-detail'); });
+      wrap.querySelectorAll('[data-act="invite"]').forEach(b=> b.onclick = ()=> openInvite(b.dataset.id));
+      wrap.querySelectorAll('[data-act="hw"]').forEach(b=> b.onclick = ()=> openHWBuilder(b.dataset.id));
+    }
+
+    function renderClassDetail(){
+      if(state.view!=='class-detail') return;
+      const cls = state.classes.find(c=>c.id===state.selectedClassId);
+      if(!cls) return;
+      document.getElementById('clsTitle').textContent = cls.name + ' • ' + cls.teacher;
+      document.getElementById('clsStatus').outerHTML = chipStatus(cls.status).replace('chip','chip id="clsStatus"');
+      document.getElementById('clsInviteCode').textContent = cls.inviteCode;
+      document.getElementById('clsInviteCode2').textContent = cls.inviteCode;
+
+      const hwList = cls.homeworkIds.map(id=>state.homeworks.find(h=>h.id===id)).filter(Boolean);
+      const subs = hwList.flatMap(h=>h.submissions);
+      const avg = subs.length ? Math.round(subs.reduce((a,b)=>a+b.score,0)/subs.length) : 0;
+      document.getElementById('clsAvgScore').textContent = subs.length ? avg : '—';
+      document.getElementById('clsStudentCount').textContent = cls.studentIds.length;
+      const openCount = hwList.filter(h=> new Date(h.due) >= new Date(todayISO())).length;
+      document.getElementById('clsHwOpen').textContent = openCount;
+      const nextDue = hwList.map(h=>h.due).sort()[0];
+      document.getElementById('clsNextDue').textContent = nextDue ? dateHuman(nextDue) : '—';
+
+      const byHwAvg = hwList.map(h=>{
+        const s = h.submissions;
+        const a = s.length? Math.round(s.reduce((x,y)=>x+y.score,0)/s.length) : 0;
+        return { name: h.name, avg: a };
+      });
+      drawLine('#clsTrend', byHwAvg.map(x=>x.avg), {c1:'#22d3ee', c2:'#34d399'});
+
+      const partMap = {};
+      hwList.forEach(h=>{
+        h.submissions.forEach(s=>{
+          Object.entries(s.perPart||{}).forEach(([p,v])=>{
+            (partMap[p] ||= []).push(v);
+          });
+        });
+      });
+      const agg = Object.entries(partMap).map(([p,arr])=>({ part:p, avg: Math.round(arr.reduce((a,b)=>a+b,0)/arr.length) }));
+      agg.sort((a,b)=>a.avg-b.avg);
+      const weakWrap = document.getElementById('clsWeaknesses'); weakWrap.innerHTML = '';
+      (agg.slice(0,4)).forEach(w=>{
+        const d = document.createElement('div');
+        d.className = 'bg-white/5 rounded-lg p-3 border border-white/10';
+        d.innerHTML = `<div class="text-sm font-semibold">Part ${w.part}</div><div class="text-xs text-slate-300 mt-1">Trung bình: ${w.avg}</div>`;
+        weakWrap.appendChild(d);
+      });
+      if(agg.length===0){ weakWrap.innerHTML = '<div class="text-sm text-slate-300">Chưa có dữ liệu</div>'; }
+
+      const qs = (document.getElementById('clsStudentSearch')?.value || '').toLowerCase();
+      const stWrap = document.getElementById('clsStudentList'); stWrap.innerHTML = '';
+      cls.studentIds.map(id=>state.students.find(s=>s.id===id)).filter(Boolean).filter(s=>{
+        return !qs || (s.name+s.email).toLowerCase().includes(qs);
+      }).forEach(s=>{
+        const initials = s.name.split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase();
+        const card = document.createElement('div');
+        card.className = 'card card-hover';
+        card.innerHTML = `
+          <div class="flex items-center gap-3">
+            <div class="h-10 w-10 rounded-full bg-gradient-to-tr from-cyan-400 to-emerald-400 text-slate-900 font-bold flex items-center justify-center">${initials}</div>
+            <div class="flex-1">
+              <div class="font-semibold">${s.name}</div>
+              <div class="text-sm text-slate-300">${s.email}</div>
+            </div>
+            <button class="btn btn-soft text-xs" data-std="${s.id}">Xem báo cáo</button>
+          </div>
+        `;
+        stWrap.appendChild(card);
+      });
+      stWrap.querySelectorAll('[data-std]').forEach(b=>{
+        b.onclick = ()=>{ state.selectedStudentId = b.getAttribute('data-std'); setView('student-detail'); };
+      });
+
+      const hwWrap = document.getElementById('clsHwList'); hwWrap.innerHTML = '';
+      hwList.sort((a,b)=> new Date(a.due)-new Date(b.due)).forEach(h=>{
+        const done = h.submissions.length;
+        const avgHw = done? Math.round(h.submissions.reduce((a,b)=>a+b.score,0)/done) : 0;
+        const statusChip = new Date(h.due) < new Date(todayISO()) ? '<span class="chip chip-slate">Kết thúc</span>' : '<span class="chip chip-amber">Đang mở</span>';
+        const el = document.createElement('div');
+        el.className = 'card card-hover';
+        el.innerHTML = `
+          <div class="flex items-start justify-between">
+            <div>
+              <div class="font-semibold">${h.name}</div>
+              <div class="text-sm text-slate-300 mt-0.5">Hạn: ${dateHuman(h.due)} • ${h.questionIds.length} câu</div>
+              <div class="text-sm text-slate-300 mt-0.5">Nộp: ${done} • Điểm TB: ${done?avgHw:'—'}</div>
+            </div>
+            ${statusChip}
+          </div>
+        `;
+        hwWrap.appendChild(el);
+      });
+    }
+
+    function renderQuestions(){
+      if(state.view!=='questions') return;
+      const q = (document.getElementById('qSearch')?.value || '').toLowerCase();
+      const p = document.getElementById('qPart')?.value || '';
+      const list = state.questions.filter(it=>{
+        const okQ = !q || it.content.toLowerCase().includes(q);
+        const okP = !p || it.part===p;
+        return okQ && okP;
+      });
+      const wrap = document.getElementById('qList'); wrap.innerHTML = '';
+      list.forEach(it=>{
+        const card = document.createElement('div');
+        card.className = 'card card-hover';
+        const selected = state.selectedQIds.has(it.id);
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="chip chip-slate">Part ${it.part}</span>
+              <span class="chip ${it.level==='Khó'?'chip-amber':it.level==='Dễ'?'chip-green':'chip-slate'}">${it.level}</span>
+            </div>
+            <label class="text-sm flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" ${selected?'checked':''} data-qsel="${it.id}"> Chọn
+            </label>
+          </div>
+          <div class="mt-2 text-sm">${it.content}</div>
+        `;
+        wrap.appendChild(card);
+      });
+      wrap.querySelectorAll('[data-qsel]').forEach(cb=>{
+        cb.onchange = ()=>{ const id = cb.getAttribute('data-qsel'); if(cb.checked) state.selectedQIds.add(id); else state.selectedQIds.delete(id); };
+      });
+    }
+
+    function renderHomeworks(){
+      if(state.view!=='homeworks') return;
+      const wrap = document.getElementById('hwListGlobal'); wrap.innerHTML = '';
+      const list = state.homeworks.slice().sort((a,b)=> new Date(a.due)-new Date(b.due));
+      list.forEach(h=>{
+        const cls = state.classes.find(c=>c.id===h.classId);
+        const done = h.submissions.length;
+        const avg = done? Math.round(h.submissions.reduce((x,y)=>x+y.score,0)/done) : 0;
+        const el = document.createElement('div');
+        el.className = 'card card-hover';
+        el.innerHTML = `
+          <div class="flex items-start justify-between">
+            <div>
+              <div class="font-semibold">${h.name}</div>
+              <div class="text-sm text-slate-300 mt-0.5">${cls?.name || '—'} • Hạn: ${dateHuman(h.due)} • ${h.questionIds.length} câu</div>
+            </div>
+            <div class="text-right">
+              <div class="text-sm text-slate-300">Nộp: ${done}</div>
+              <div class="text-sm text-slate-300">TB: ${done?avg:'—'}</div>
+            </div>
+          </div>
+        `;
+        wrap.appendChild(el);
+      });
+    }
+
+    function renderStudents(){
+      if(state.view!=='students') return;
+      const q = (document.getElementById('studentSearch')?.value || '').toLowerCase();
+      const list = state.students.filter(s=>{
+        const cls = state.classes.find(c=>c.id===s.classId);
+        const hay = (s.name + s.email + (cls?.name||'')).toLowerCase();
+        return !q || hay.includes(q);
+      });
+      const wrap = document.getElementById('studentListGlobal'); wrap.innerHTML = '';
+      list.forEach(s=>{
+        const cls = state.classes.find(c=>c.id===s.classId);
+        const initials = s.name.split(' ').map(x=>x[0]).join('').slice(0,2).toUpperCase();
+        const card = document.createElement('div');
+        card.className = 'card card-hover';
+        card.innerHTML = `
+          <div class="flex items-center gap-3">
+            <div class="h-10 w-10 rounded-full bg-gradient-to-tr from-cyan-400 to-emerald-400 text-slate-900 font-bold flex items-center justify-center">${initials}</div>
+            <div class="flex-1">
+              <div class="font-semibold">${s.name}</div>
+              <div class="text-sm text-slate-300">${s.email}</div>
+            </div>
+            <div class="chip chip-slate">${cls?.name || 'Chưa vào lớp'}</div>
+          </div>
+          <div class="mt-3 flex gap-2">
+            <button class="btn btn-soft text-xs" data-viewstd="${s.id}">Xem báo cáo</button>
+            ${cls?`<button class="btn btn-soft text-xs" data-goto="${cls.id}">Vào lớp</button>`:''}
+          </div>
+        `;
+        wrap.appendChild(card);
+      });
+      wrap.querySelectorAll('[data-viewstd]').forEach(b=> b.onclick = ()=>{ state.selectedStudentId = b.dataset.viewstd; setView('student-detail'); });
+      wrap.querySelectorAll('[data-goto]').forEach(b=> b.onclick = ()=>{ state.selectedClassId = b.dataset.goto; setView('class-detail'); });
+    }
+
+    function renderReports(){
+      if(state.view!=='reports') return;
+      let totalSlots = 0, submitted = 0;
+      state.classes.forEach(cls=>{
+        const stCount = cls.studentIds.length;
+        cls.homeworkIds.forEach(hid=>{
+          totalSlots += stCount;
+          const hw = state.homeworks.find(h=>h.id===hid);
+          submitted += (hw?.submissions.length || 0);
+        });
+      });
+      const percent = totalSlots? Math.round(submitted/totalSlots*100) : 0;
+      const circ = 2*Math.PI*50; const val = (percent/100)*circ;
+      document.getElementById('repDonutVal').setAttribute('stroke-dasharray', `${val} ${circ}`);
+      document.getElementById('repDonutLabel').textContent = `${percent}% lượt nộp (ước tính)`;
+
+      const partMap = {};
+      state.homeworks.forEach(h=> h.submissions.forEach(s=>{
+        Object.entries(s.perPart||{}).forEach(([p,v])=>{ (partMap[p] ||= []).push(v); });
+      }));
+      const parts = ['1','2','3','4','5','6','7'].map(p=>({label:'Part '+p, value: partMap[p]?.length? Math.round(partMap[p].reduce((a,b)=>a+b,0)/partMap[p].length) : 0}));
+      drawBars('#repBars', parts);
+    }
+
+    function renderStudentDetail(){
+      if(state.view!=='student-detail') return;
+      const st = state.students.find(s=>s.id===state.selectedStudentId);
+      if(!st) return;
+      const cls = state.classes.find(c=>c.id===st.classId);
+      document.getElementById('stdTitle').textContent = st.name + (st.email? ' • ' + st.email : '');
+      document.getElementById('stdClass').textContent = cls? ('Lớp: ' + cls.name) : 'Chưa vào lớp';
+
+      const mySubs = state.homeworks.filter(h=>h.classId===st.classId).map(h=>{
+        const sub = h.submissions.find(su=>su.studentId===st.id);
+        return { hw:h, sub };
+      }).filter(x=>x.sub);
+
+      const avg = mySubs.length? Math.round(mySubs.reduce((a,b)=>a+(b.sub?.score||0),0)/mySubs.length) : 0;
+      document.getElementById('stdAvg').textContent = mySubs.length? avg : '—';
+      drawLine('#stdTrend', mySubs.map(x=>x.sub.score), {c1:'#22d3ee', c2:'#34d399'});
+
+      const partMap = {};
+      mySubs.forEach(x=>{
+        Object.entries(x.sub.perPart||{}).forEach(([p,v])=>{ (partMap[p] ||= []).push(v); });
+      });
+      const parts = ['1','2','3','4','5','6','7'].map(p=>({label:'Part '+p, value: partMap[p]?.length? Math.round(partMap[p].reduce((a,b)=>a+b,0)/partMap[p].length) : 0}));
+      drawBars('#stdBars', parts);
+
+      const wrap = document.getElementById('stdHwList'); wrap.innerHTML = '';
+      mySubs.slice(-6).forEach(x=>{
+        const card = document.createElement('div');
+        card.className = 'card card-hover';
+        card.innerHTML = `
+          <div class="flex items-start justify-between">
+            <div>
+              <div class="font-semibold">${x.hw.name}</div>
+              <div class="text-sm text-slate-300 mt-0.5">Hạn: ${dateHuman(x.hw.due)}</div>
+            </div>
+            <span class="chip ${x.sub.score>=70?'chip-green':'chip-amber'}">Điểm: ${x.sub.score}</span>
+          </div>
+        `;
+        wrap.appendChild(card);
+      });
+      if(mySubs.length===0){ wrap.innerHTML = '<div class="text-sm text-slate-300">Chưa có dữ liệu</div>'; }
+    }
+
+    // --- Charts ---
+    function drawLine(sel, values, colors){
+      const svg = document.querySelector(sel); if(!svg) return;
+      const w=600,h=200,p=24;
+      const vals = values.length? values : [0];
+      const min = Math.min(...vals)-10, max = Math.max(...vals)+10;
+      const xStep = (w-p*2)/Math.max(vals.length-1,1);
+      const y = v => h-p - ((v - min)/(max - min || 1)) * (h-p*2);
+      const pts = vals.map((v,i)=>[p+i*xStep, y(v)]);
+      const d = pts.map((pt,i)=> (i?'L':'M') + pt[0].toFixed(1)+','+pt[1].toFixed(1)).join(' ');
+      const gid = 'grad-'+Math.random().toString(36).slice(2,7);
+      svg.innerHTML = `
+        <defs><linearGradient id="${gid}" x1="0" x2="1"><stop offset="0%" stop-color="${colors.c1}"/><stop offset="100%" stop-color="${colors.c2}"/></linearGradient></defs>
+        <path d="${d}" fill="none" stroke="url(#${gid})" stroke-width="3" stroke-linecap="round"></path>
+        ${pts.map(pt=>`<circle cx="${pt[0]}" cy="${pt[1]}" r="3.5" fill="${colors.c2}"></circle>`).join('')}
+      `;
+    }
+    function drawBars(sel, items){
+      const svg = document.querySelector(sel); if(!svg) return;
+      const w=600,h=220,p=32;
+      const maxV = Math.max(100, ...items.map(i=>i.value));
+      const barW = (w - p*2)/items.length - 12;
+      let x=p, g='';
+      items.forEach(it=>{
+        const bh = (it.value/maxV)*(h-p*2);
+        const y = h-p-bh;
+        g += `
+          <g>
+            <rect x="${x}" y="${y}" width="${barW}" height="${bh}" rx="10" fill="url(#barGrad)"></rect>
+            <text x="${x+barW/2}" y="${h-p+16}" fill="rgba(255,255,255,.7)" font-size="11" text-anchor="middle">${it.label}</text>
+            <text x="${x+barW/2}" y="${y-6}" fill="white" font-size="12" text-anchor="middle" font-weight="600">${it.value}</text>
+          </g>
+        `;
+        x += barW + 12;
+      });
+      svg.innerHTML = `
+        <defs><linearGradient id="barGrad" x1="0" x2="0" y1="0" y2="1"><stop offset="0%" stop-color="#22d3ee"/><stop offset="100%" stop-color="#34d399"/></linearGradient></defs>
+        ${g}
+      `;
+    }
+
+    // --- Modals ---
+    function openModal(id){ document.getElementById(id).classList.remove('hidden'); }
+    function closeModal(id){ document.getElementById(id).classList.add('hidden'); }
+    document.querySelectorAll('[data-close]').forEach(b=> b.onclick = ()=> closeModal(b.getAttribute('data-close')));
+    document.querySelectorAll('[id^="modal-"]').forEach(m=> m.addEventListener('click', e=>{ if(e.target===m) closeModal(m.id); }));
+
+    // --- Sidebar/header behaviour (new) ---
+    const sidebar = document.getElementById('sidebar');
+    const scrim = document.getElementById('scrim');
+    function setScrim(){
+      const isMobile = window.innerWidth < 640;
+      const collapsed = sidebar.getAttribute('data-collapsed') === 'true';
+      if(isMobile && !collapsed){
+        scrim.classList.add('show');
+      } else {
+        scrim.classList.remove('show');
+      }
+    }
+    function toggleSidebar(force){
+      const collapsed = sidebar.getAttribute('data-collapsed') === 'true';
+      const next = (typeof force === 'boolean') ? !force : !collapsed; // if force true = expanded -> collapsed becomes false
+      sidebar.setAttribute('data-collapsed', next ? 'true' : 'false');
+      setScrim();
+    }
+    document.getElementById('btnToggleSidebar').onclick = ()=> toggleSidebar();
+    document.getElementById('btnCollapseSidebar').onclick = ()=> toggleSidebar();
+    scrim.onclick = ()=> toggleSidebar(true); // clicking scrim collapses (true => want collapsed)
+    window.addEventListener('resize', setScrim);
+    // Keyboard shortcut Ctrl+B
+    document.addEventListener('keydown', (e)=>{
+      if((e.ctrlKey || e.metaKey) && e.key.toLowerCase()==='b'){ e.preventDefault(); toggleSidebar(); }
+    });
+    // Header compact toggle
+    document.getElementById('btnToggleHeader').onclick = ()=>{
+      const compact = document.body.getAttribute('data-compact-header')==='true';
+      document.body.setAttribute('data-compact-header', compact ? 'false' : 'true');
+    };
+
+    // --- Navbar wiring ---
+    document.querySelectorAll('.nav').forEach(n=>{
+      n.onclick = ()=>{
+        const v = n.getAttribute('data-view');
+        setView(v);
+        // Auto collapse on mobile after navigate (keep rail visible)
+        if(window.innerWidth < 640) toggleSidebar(true);
+      };
+    });
+
+    // Header actions
+    document.getElementById('btnInviteGlobal').onclick = ()=> openInvite();
+    document.getElementById('btnNewHW').onclick = ()=> openHWBuilder(state.selectedClassId || state.classes[0]?.id);
+    document.getElementById('globalSearch').addEventListener('input', e=>{
+      const q = e.target.value.toLowerCase();
+      if(state.view==='classes'){ document.getElementById('classSearch').value = q; renderClasses(); }
+      if(state.view==='questions'){ document.getElementById('qSearch').value = q; renderQuestions(); }
+      if(state.view==='students'){ document.getElementById('studentSearch').value = q; renderStudents(); }
+    });
+
+    // Classes filters
+    document.getElementById('classSearch').addEventListener('input', renderClasses);
+    document.getElementById('classFilter').addEventListener('change', renderClasses);
+    document.getElementById('btnQuickInvite').onclick = ()=> openInvite();
+
+    // Class detail header buttons
+    document.getElementById('btnBackToClasses').onclick = ()=> setView('classes');
+    document.getElementById('btnInviteInClass').onclick = ()=> openInvite(state.selectedClassId);
+    document.getElementById('btnAssignHW').onclick = ()=> openHWBuilder(state.selectedClassId);
+    document.getElementById('btnAssignFromTab').onclick = ()=> openHWBuilder(state.selectedClassId);
+    document.getElementById('btnCopyInvite').onclick = ()=>{
+      const cls = state.classes.find(c=>c.id===state.selectedClassId);
+      if(cls) copyText(cls.inviteCode);
+    };
+    document.getElementById('btnCopyInvite2').onclick = ()=>{
+      const cls = state.classes.find(c=>c.id===state.selectedClassId);
+      if(cls) copyText(cls.inviteCode);
+    };
+    document.getElementById('clsStudentSearch').addEventListener('input', renderClassDetail);
+
+    // Tabs in class detail
+    document.querySelectorAll('.ctab').forEach(t=>{
+      t.onclick = ()=>{
+        const key = t.getAttribute('data-ctab');
+        document.querySelectorAll('.ctab').forEach(x=> x.classList.remove('bg-white/10','font-semibold'));
+        t.classList.add('bg-white/10','font-semibold');
+        ['overview','students','homeworks','invite'].forEach(k=>{
+          document.getElementById('cls-tab-'+k).classList.toggle('hidden', k!==key);
+        });
+      };
+    });
+
+    // Invite modal
+    function openInvite(classId){
+      const sel = document.getElementById('inviteClassSelect');
+      sel.innerHTML = state.classes.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+      if(classId) sel.value = classId;
+      const cls = state.classes.find(c=>c.id===sel.value);
+      document.getElementById('inviteCodeShow').textContent = cls?.inviteCode || '-';
+      openModal('modal-invite');
+    }
+    document.getElementById('inviteClassSelect').addEventListener('change', (e)=>{
+      const cls = state.classes.find(c=>c.id===e.target.value);
+      document.getElementById('inviteCodeShow').textContent = cls?.inviteCode || '-';
+    });
+    document.getElementById('btnCopyInviteModal').onclick = ()=> {
+      const code = document.getElementById('inviteCodeShow').textContent.trim();
+      if(code && code!=='-') copyText(code);
+    };
+    document.getElementById('btnInviteEmails').onclick = ()=>{
+      const emails = (document.getElementById('inviteEmails').value||'').split(',').map(x=>x.trim()).filter(Boolean);
+      const classId = document.getElementById('inviteClassSelect').value;
+      if(emails.length===0){ showToast('Vui lòng nhập email'); return; }
+      let added = 0;
+      emails.forEach(em=>{
+        let st = state.students.find(s=>s.email.toLowerCase()===em.toLowerCase());
+        if(!st){
+          const name = (em.split('@')[0]||'SV').replace(/[._-]/g,' ').split(' ').map(w=>w.charAt(0).toUpperCase()+w.slice(1)).join(' ');
+          st = { id: uid('ST'), name, email: em, classId: null };
+          state.students.push(st);
+        }
+        if(attachStudentToClass(st.id, classId)) added++;
+      });
+      showToast('Đã thêm ' + added + ' học viên');
+      document.getElementById('inviteEmails').value = '';
+      renderAll();
+    };
+    document.getElementById('formInviteEmails')?.addEventListener('submit', (e)=>{ e.preventDefault(); document.getElementById('btnInviteEmails').click(); });
+
+    // Homework builder
+    function openHWBuilder(preselectClassId){
+      state.selectedQIds = new Set();
+      const sel = document.getElementById('hwClass');
+      sel.innerHTML = state.classes.map(c=>`<option value="${c.id}">${c.name}</option>`).join('');
+      if(preselectClassId) sel.value = preselectClassId;
+      stepGo(1);
+      document.getElementById('hwName').value = '';
+      document.getElementById('hwDue').value = plusDays(7);
+      renderHWQList();
+      openModal('modal-hw');
+    }
+    function stepGo(n){
+      document.getElementById('step1').className = 'text-center py-2 rounded-lg ' + (n===1?'bg-white/10 font-semibold':'bg-white/5');
+      document.getElementById('step2').className = 'text-center py-2 rounded-lg ' + (n===2?'bg-white/10 font-semibold':'bg-white/5');
+      document.getElementById('step3').className = 'text-center py-2 rounded-lg ' + (n===3?'bg-white/10 font-semibold':'bg-white/5');
+      document.getElementById('hw-step-1').classList.toggle('hidden', n!==1);
+      document.getElementById('hw-step-2').classList.toggle('hidden', n!==2);
+      document.getElementById('hw-step-3').classList.toggle('hidden', n!==3);
+    }
+    document.getElementById('toStep2').onclick = ()=>{
+      const name = document.getElementById('hwName').value.trim();
+      const due = document.getElementById('hwDue').value;
+      if(!name || !due){ showToast('Vui lòng nhập tên và hạn chót'); return; }
+      stepGo(2);
+    };
+    document.getElementById('toStep3').onclick = ()=>{
+      if(state.selectedQIds.size===0){ showToast('Hãy chọn ít nhất 1 câu hỏi'); return; }
+      const cls = state.classes.find(c=>c.id===document.getElementById('hwClass').value);
+      document.getElementById('sumClass').textContent = cls?.name || '-';
+      document.getElementById('sumName').textContent = document.getElementById('hwName').value.trim();
+      document.getElementById('sumDue').textContent = dateHuman(document.getElementById('hwDue').value);
+      const chosen = [...state.selectedQIds].map(id=> state.questions.find(q=>q.id===id)).filter(Boolean);
+      document.getElementById('sumQ').innerHTML = chosen.map(q=>`<div class="text-slate-200">• Part ${q.part} • ${q.level} — ${q.content}</div>`).join('');
+      stepGo(3);
+    };
+    document.getElementById('backTo2').onclick = ()=> stepGo(2);
+    document.getElementById('btnCreateHW').onclick = ()=>{
+      const classId = document.getElementById('hwClass').value;
+      const name = document.getElementById('hwName').value.trim();
+      const due = document.getElementById('hwDue').value;
+      const qids = [...state.selectedQIds];
+      const hw = createHomework({classId, name, due, questionIds: qids});
+      state.homeworks.push(hw);
+      const cls = state.classes.find(c=>c.id===classId);
+      if(cls) cls.homeworkIds.push(hw.id);
+      closeModal('modal-hw');
+      showToast('Đã giao: ' + name);
+      state.selectedClassId = classId;
+      setView('class-detail');
+      document.querySelectorAll('.ctab').forEach(t=>{ if(t.getAttribute('data-ctab')==='homeworks'){ t.click(); } });
+    };
+
+    function renderHWQList(){
+      const wrap = document.getElementById('hwQList'); if(!wrap) return;
+      const q = (document.getElementById('hwQSearch')?.value || '').toLowerCase();
+      const p = document.getElementById('hwQPart')?.value || '';
+      const list = state.questions.filter(it=>{
+        const okQ = !q || it.content.toLowerCase().includes(q);
+        const okP = !p || it.part===p;
+        return okQ && okP;
+      });
+      wrap.innerHTML = '';
+      list.forEach(it=>{
+        const selected = state.selectedQIds.has(it.id);
+        const card = document.createElement('div');
+        card.className = 'card card-hover';
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="chip chip-slate">Part ${it.part}</span>
+              <span class="chip ${it.level==='Khó'?'chip-amber':it.level==='Dễ'?'chip-green':'chip-slate'}">${it.level}</span>
+            </div>
+            <label class="text-sm flex items-center gap-2 cursor-pointer">
+              <input type="checkbox" ${selected?'checked':''} data-hwq="${it.id}"> Chọn
+            </label>
+          </div>
+          <div class="mt-2 text-sm">${it.content}</div>
+        `;
+        wrap.appendChild(card);
+      });
+      wrap.querySelectorAll('[data-hwq]').forEach(cb=>{
+        cb.onchange = ()=>{ const id = cb.getAttribute('data-hwq'); if(cb.checked) state.selectedQIds.add(id); else state.selectedQIds.delete(id); };
+      });
+    }
+    document.getElementById('hwQSearch').addEventListener('input', renderHWQList);
+    document.getElementById('hwQPart').addEventListener('change', renderHWQList);
+
+    // Global shortcuts
+    document.getElementById('btnInviteGlobal2')?.addEventListener('click', ()=> openInvite());
+    document.getElementById('btnNewHW2')?.addEventListener('click', ()=> openHWBuilder(state.selectedClassId || state.classes[0]?.id));
+    document.getElementById('btnOpenHWBuilder')?.addEventListener('click', ()=> openHWBuilder(state.selectedClassId || state.classes[0]?.id));
+
+    // Init
+    setView('classes');
+    setScrim();
+
+  </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'983bb6af9229cb25',t:'MTc1ODY0ODAzNi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

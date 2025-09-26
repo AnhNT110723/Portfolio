@@ -64,10 +64,11 @@
                         class="text-slate-300 hover:text-blue-400 transition-colors duration-300 font-medium">Skills</a>
                     <a href="#projects"
                         class="text-slate-300 hover:text-blue-400 transition-colors duration-300 font-medium">Projects</a>
+                    <a href="#education"
+                        class="text-slate-300 hover:text-blue-400 transition-colors duration-300 font-medium">Education</a>
                     <a href="#contact"
                         class="text-slate-300 hover:text-blue-400 transition-colors duration-300 font-medium">Contact</a>
-                               <a href="#education"
-                        class="text-slate-300 hover:text-blue-400 transition-colors duration-300 font-medium">education</a>
+
                 </div>
                 <button class="md:hidden text-slate-300 hover:text-blue-400" onclick="toggleMobileMenu()">
                     <i class="fas fa-bars text-xl"></i>
@@ -81,6 +82,7 @@
                 <a href="#about" class="block text-slate-300 hover:text-blue-400 transition-colors">About</a>
                 <a href="#skills" class="block text-slate-300 hover:text-blue-400 transition-colors">Skills</a>
                 <a href="#projects" class="block text-slate-300 hover:text-blue-400 transition-colors">Projects</a>
+                <a href="#education"class="block text-slate-300 hover:text-blue-400 transition-colors">Education</a>
                 <a href="#contact" class="block text-slate-300 hover:text-blue-400 transition-colors">Contact</a>
             </div>
         </div>
@@ -145,7 +147,7 @@
                     <div class="space-y-4">
                         <p class="text-blue-400 font-mono text-lg">Console.Writeline("Hello World!");</p>
                         <h1 class="text-5xl lg:text-7xl font-black leading-tight">
-                            Tôi là <span class="text-gradient">Anh NT</span>
+                            I am <span class="text-gradient"> Tuan Anh</span>
                         </h1>
                         <div class="text-2xl lg:text-3xl text-slate-300 font-light">
                             <span class="typewriter">Creative Full Stack Developer</span>
@@ -153,19 +155,19 @@
                     </div>
 
                     <p class="text-xl text-slate-400 leading-relaxed max-w-lg">
-                        Tạo ra những trải nghiệm số độc đáo với sự kết hợp hoàn hảo giữa
-                        <span class="text-blue-400 font-semibold">thiết kế</span> và
-                        <span class="text-purple-400 font-semibold">công nghệ</span>.
+                        Create unique experiences with the perfect combination of
+                        <span class="text-blue-400 font-semibold">design</span> and
+                        <span class="text-purple-400 font-semibold">technology</span>.
                     </p>
 
                     <div class="flex flex-wrap gap-4">
                         <button onclick="scrollToSection('projects')"
                             class="bg-gradient-primary px-8 py-4 rounded-full text-white font-semibold hover-scale hover-glow transition-all duration-300">
-                            <i class="fas fa-rocket mr-2"></i>Xem Dự Án
+                            <i class="fas fa-rocket mr-2"></i>View project
                         </button>
                         <button onclick="downloadCV()"
                             class="glass border-2 border-blue-400 px-8 py-4 rounded-full text-blue-400 font-semibold hover:bg-blue-400 hover:text-white transition-all duration-300">
-                            <i class="fas fa-download mr-2"></i>Tải CV
+                            <i class="fas fa-download mr-2"></i>Download CV
                         </button>
                     </div>
 
@@ -239,7 +241,7 @@
             <div class="max-w-6xl mx-auto">
                 <div class="text-center mb-16 animate-fade-in-up">
                     <h2 class="text-4xl lg:text-5xl font-bold mb-6">
-                        <span data-aos="fade-up" class="text-gradient">Về Tôi</span>
+                        <span data-aos="fade-up" class="text-gradient">About me</span>
                     </h2>
                     <div class="w-24 h-1 bg-gradient-primary mx-auto rounded-full"></div>
                 </div>
@@ -269,7 +271,7 @@
                                 <div class="text-slate-400 text-sm">Years of experience</div>
                             </div>
                             <div class="text-center">
-                                <div class="text-3xl font-bold text-green-400 mb-2">100%</div>
+                                <div class="text-3xl font-bold text-green-400 mb-2">0%</div>
                                 <div class="text-slate-400 text-sm">Customer satisfaction</div>
                             </div>
                         </div>
@@ -503,8 +505,7 @@
                                     class="fas fa-shopping-cart text-6xl text-white opacity-80 group-hover:scale-110 transition-transform duration-300"></i>
                             </div>
                             <div class="absolute top-4 right-4">
-                                <span
-                                    class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">Completed</span>
+                                <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">Completed</span>
                             </div>
                         </div>
                         <div class="p-8">
@@ -537,7 +538,7 @@
                     <!-- Project 2 -->
                     <div data-aos="flip-left" data-aos-duration="1000" data-aos-delay="200" class="group  project-card glass-effect rounded-3xl overflow-hidden"
                         style="animation-delay: 0.1s;">
-                        <div class="relative h-48 bg-gradient-quaternary overflow-hidden">
+                        <!-- <div class="relative h-48 bg-gradient-quaternary overflow-hidden">
                             <div class="absolute inset-0 flex items-center justify-center">
                                 <i
                                     class="fas fa-brain text-6xl text-white opacity-80 group-hover:scale-110 transition-transform duration-300"></i>
@@ -546,29 +547,35 @@
                                 <span class="bg-yellow-500 text-black px-3 py-1 rounded-full text-sm font-medium">In
                                     Progress</span>
                             </div>
+                        </div> -->
+                        <div class="absolute top-4 right-4">
+                                <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">Deployed</span>
                         </div>
+                        <img src="./static/images/FAI.jpg" alt="chat-app real time">
                         <div class="p-8">
-                            <h3 class="text-2xl font-bold mb-4 text-green-400">AI Task Manager</h3>
+                            <h3 class="text-2xl font-bold mb-4 text-green-400">AI English Tutor</h3>
                             <p class="text-gray-300 mb-6 leading-relaxed">
-                                Hệ thống quản lý công việc thông minh với AI scheduling,
-                                team collaboration và analytics dashboard chi tiết.
+                                Website that helps users learn English or listening and speaking skills with AI,
+                                 helps personalize learning paths,...
                             </p>
                             <div class="flex flex-wrap gap-2 mb-6">
-                                <span class="bg-cyan-500/20 text-cyan-300 px-3 py-1 rounded-full text-sm">Vue.js</span>
+                                <span class="bg-cyan-500/20 text-cyan-300 px-3 py-1 rounded-full text-sm">ASP.NET core MVC</span>      
+                     <span class="bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full text-sm">OpenAI</span>
                                 <span
-                                    class="bg-yellow-500/20 text-yellow-300 px-3 py-1 rounded-full text-sm">Python</span>
-                                <span class="bg-red-500/20 text-red-300 px-3 py-1 rounded-full text-sm">Redis</span>
-                                <span class="bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full text-sm">OpenAI</span>
+                                    class="bg-yellow-500/20 text-yellow-300 px-3 py-1 rounded-full text-sm">Razor Page(cshtml)</span>
+                                <span class="bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full text-sm">Sql server</span>
+                         
                             </div>
                             <div class="flex space-x-4">
-                                <button onclick="showProjectDemo('AI Task Manager')"
-                                    class="flex-1 bg-gradient-quaternary text-white py-3 rounded-xl font-medium hover-glow transition-all duration-300">
-                                    <i class="fas fa-external-link-alt mr-2"></i>Demo
-                                </button>
                                 <button
+                                    onclick="showProjectDemo('AI English Tutor', 'https://faienglish.xyz/')"
+                                    class="flex-1 bg-gradient-primary text-white py-3 rounded-xl font-medium hover-glow transition-all duration-300">
+                                    <i class="fas fa-external-link-alt mr-2"></i>Demo
+                                </button>   
+                                <a href="https://github.com/AnhNT110723/AITutor_EXE101" target="_blank"
                                     class="w-12 h-12 glass rounded-xl flex items-center justify-center hover:bg-slate-600 transition-colors">
                                     <i class="fab fa-github text-slate-300"></i>
-                                </button>
+                                </a>
                             </div>
                         </div>
                     </div>
@@ -584,6 +591,9 @@
                                 <span
                                     class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">Completed</span>
                             </div> -->
+                        <div class="absolute top-4 right-4">
+                                <span class="bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium">Deployed</span>
+                        </div>
                             <img src="./static/images/chat-app.png" alt="chat-app real time">
                         </div>
                         <div class="p-8">
@@ -630,8 +640,8 @@
                         <div class="p-8">
                             <h3 class="text-2xl font-bold mb-4 text-purple-400">Car rental</h3>
                             <p class="text-gray-300 mb-6 leading-relaxed">
-                                The current instant messaging platform is a modern web application,
-                                 powered by Socket.IO for real-time messaging.
+                                Convenient online car rental booking system, allowing users to search, 
+                                book cars with flexible time and manage orders easily.
                             </p>
                             <div class="flex flex-wrap gap-2 mb-6">
                                 <span class="bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full text-sm">Java</span>
@@ -671,13 +681,15 @@
                         <div class="p-8">
                             <h3 class="text-2xl font-bold mb-4 text-purple-400">Online Learning</h3>
                             <p class="text-gray-300 mb-6 leading-relaxed">
-                                The current instant messaging platform is a modern web application,
-                                 powered by Socket.IO for real-time messaging.
+                               Modern online learning platform, offering diverse courses with video lectures,
+                                quiz,...
                             </p>
                             <div class="flex flex-wrap gap-2 mb-6">
                                 <span class="bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full text-sm">Java</span>
                                 <span class="bg-green-500/20 text-green-300 px-3 py-1 rounded-full text-sm">Jsp</span>
-                                <span class="bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full text-sm">Serverlet</span>
+                                <span class="bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full text-sm">SQL Server</span>
+                                <span class="bg-red-500/20 text-red-300 px-3 py-1 rounded-full text-sm">Serverlet</span>
+
                                 
                             </div>
                             <div class="flex space-x-4">
@@ -711,13 +723,13 @@
                         <div class="p-8">
                             <h3 class="text-2xl font-bold mb-4 text-purple-400">Online Shopping</h3>
                             <p class="text-gray-300 mb-6 leading-relaxed">
-                                The current instant messaging platform is a modern web application,
-                                 powered by Socket.IO for real-time messaging.
+                                Modern eCommerce platform with shopping cart, basic CRUD, product filtering,...
                             </p>
                             <div class="flex flex-wrap gap-2 mb-6">
                                 <span class="bg-blue-500/20 text-blue-300 px-3 py-1 rounded-full text-sm">Java</span>
                                 <span class="bg-green-500/20 text-green-300 px-3 py-1 rounded-full text-sm">Jsp</span>
-                                <span class="bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full text-sm">Serverlet</span>
+                                <span class="bg-purple-500/20 text-purple-300 px-3 py-1 rounded-full text-sm">SQL Server</span>
+                                <span class="bg-red-500/20 text-red-300 px-3 py-1 rounded-full text-sm">Serverlet</span>
                                 
                             </div>
                             <div class="flex space-x-4">
@@ -771,7 +783,7 @@
                                     <p class="text-xl text-gray-300 mb-4">Bachelor of Software Engineering</p>
                                     <div class="grid md:grid-cols-2 gap-6">
                                         <div>
-                                            <p class="text-gray-400 mb-2"><i class="fas fa-medal mr-2 text-yellow-400"></i><strong>GPA:</strong> 3.8/4.0 ()</p>
+                                            <p class="text-gray-400 mb-2"><i class="fas fa-medal mr-2 text-yellow-400"></i><strong>GPA:</strong> 7.7/10</p>
                                             <!-- <p class="text-gray-400 mb-2"><i class="fas fa-trophy mr-2 text-yellow-400"></i><strong>Thứ hạng:</strong> Top 5% khóa học</p>
                                             <p class="text-gray-400"><i class="fas fa-award mr-2 text-yellow-400"></i><strong>Học bổng:</strong> Tài năng HUST</p> -->
                                         </div>
@@ -779,10 +791,11 @@
                                             <h4 class="font-semibold text-white mb-3">Specialized subjects:</h4>
                                             <ul class="text-gray-300 space-y-1">
                                                 <li>• Algorithms & Data Structures</li>
-                                                <li>• Software Architecture</li>
+                                                <li>• SW Architecture and Design</li>
                                                 <li>• Database Systems</li>
-                                                <li>• Web Technologies</li>
-                                                <li>• Machine Learning</li>
+                                                <li>• Java Web Application Development</li>
+                                                <li>• Building Cross-Platform Back-End Application With .NET</li>
+                                                <li>• ...</li>
                                             </ul>
                                         </div>
                                     </div>
@@ -792,46 +805,93 @@
                     </div>
 
                     <!-- Certifications -->
-                    <div data-aos="fade-left" data-aos-duration="1000" data-aos-delay="200" class="relative pl-20">
+                    <div data-aos="fade-left" data-aos-duration="1000" data-aos-delay="200" class="relative pl-20 pb-12">
                         <div class="timeline-item glass-effect rounded-2xl p-8 hover-lift">
                             <div class="flex items-start gap-6">
                                 <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-teal-600 rounded-2xl flex items-center justify-center flex-shrink-0 pulse-glow">
                                     <i class="fas fa-certificate text-2xl text-white"></i>
                                 </div>
                                 <div class="flex-1">
-                                    <h3 class="text-2xl font-bold text-white mb-6">Chứng Chỉ Chuyên Môn</h3>
+                                    <h3 class="text-2xl font-bold text-white mb-6">Professional Certificate</h3>
                                     <div class="grid md:grid-cols-2 gap-6">
                                         <div class="space-y-4">
                                             <div class="flex items-center gap-3">
-                                                <i class="fab fa-microsoft text-2xl text-blue-400"></i>
-                                                <div>
-                                                    <p class="font-semibold text-white">Microsoft Azure Developer</p>
-                                                    <p class="text-sm text-gray-400">2023</p>
+                                                <!-- <i class="fab fa-microsoft text-2xl text-blue-400"></i> -->
+                                                 <img src="./static/images/coursera.png" alt="Coursera" class="w-8 h-8 inline-block">
+                                               <a href="https://coursera.org/share/ceeb028cbf25c0944469815b957595d6" target="_blank" class="group">
+                                                 <div>
+                                                    <p class="font-semibold text-white group-hover:text-blue-400">Web Design for Everybody</p>
+                                                    <p class="text-sm text-gray-400 group-hover:text-blue-300">2022</p>
                                                 </div>
+                                                </a>
                                             </div>
                                             <div class="flex items-center gap-3">
-                                                <i class="fab fa-aws text-2xl text-orange-400"></i>
+                                                <img src="./static/images/coursera.png" alt="Coursera" class="w-8 h-8 inline-block">
+                                                <a href="https://coursera.org/share/d5dabf4d4d0f36ac739b3666e1a87626" target="_blank" class="group">
                                                 <div>
-                                                    <p class="font-semibold text-white">AWS Solutions Architect</p>
-                                                    <p class="text-sm text-gray-400">2023</p>
+                                                    <p class="font-semibold text-white group-hover:text-blue-400">Computer Communications</p>
+                                                    <p class="text-sm text-gray-400 group-hover:text-blue-300">2023</p>
                                                 </div>
+                                                </a>
                                             </div>
                                         </div>
                                         <div class="space-y-4">
                                             <div class="flex items-center gap-3">
-                                                <i class="fab fa-google text-2xl text-red-400"></i>
+                                                <img src="./static/images/coursera.png" alt="Coursera" class="w-8 h-8 inline-block">
+                                                 <a href="https://coursera.org/share/1c652aa6198a5ded06ea327240423b7a" target="_blank" class="group">
                                                 <div>
-                                                    <p class="font-semibold text-white">Google Cloud Professional</p>
-                                                    <p class="text-sm text-gray-400">2022</p>
+                                                    <p class="font-semibold text-white group-hover:text-blue-400">Software Development Lifecycle</p>
+                                                    <p class="text-sm text-gray-400 group-hover:text-blue-300">2024</p>
                                                 </div>
+                                                </a>
                                             </div>
                                             <div class="flex items-center gap-3">
-                                                <i class="fas fa-brain text-2xl text-purple-400"></i>
+                                                <img src="./static/images/coursera.png" alt="Coursera" class="w-8 h-8 inline-block">
+                                               <a href="https://coursera.org/share/e557567a1f03d19e9127f79369909616" target="_blank" class="group">
+                                                 <div>
+                                                    <p class="font-semibold text-white group-hover:text-blue-400">User Experience Research and Design</p>
+                                                    <p class="text-sm text-gray-400 group-hover:text-blue-300">2025</p>
+                                                </div>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Certifications Laguage -->
+                    <div data-aos="fade-left" data-aos-duration="1000" data-aos-delay="400" class="relative pl-20">
+                        <div class="timeline-item glass-effect rounded-2xl p-8 hover-lift">
+                            <div class="flex items-start gap-6">
+                                <div class="w-16 h-16 bg-gradient-to-br from-green-500 to-teal-600 rounded-2xl flex items-center justify-center flex-shrink-0 pulse-glow">
+                                    <i class="fas fa-certificate text-2xl text-white"></i>
+                                </div>
+                                <div class="flex-1">
+                                    <h3 class="text-2xl font-bold text-white mb-6">Language Certificate</h3>
+                                    <div class="grid md:grid-cols-2 gap-6">
+                                        <div class="space-y-4">
+                                            <div class="flex items-center gap-3">
+                                                <!-- <i class="fab fa-microsoft text-2xl text-blue-400"></i> -->
+                                                 <img src="./static/images/toeic-logos.webp" alt="Coursera" class="w-8 h-8 inline-block">
                                                 <div>
-                                                    <p class="font-semibold text-white">Machine Learning Specialist</p>
-                                                    <p class="text-sm text-gray-400">2022</p>
+                                                    <p class="font-semibold text-white">Toeic (550)</p>
+                                                    <p class="text-sm text-gray-400">2025</p>
                                                 </div>
                                             </div>
+                                          
+                                        </div>
+                                        <div class="space-y-4">
+                                            <div class="flex items-center gap-3">
+                                               <img src="./static/images/coursera.png" alt="Coursera" class="w-8 h-8 inline-block">
+                                                 <a href="https://coursera.org/share/401bcb7cd6b7098b75615ede0928c058" target="_blank"  class="group">
+                                                <div>
+                                                    <p class="font-semibold text-white group-hover:text-blue-400">Academic English: Writing</p>
+                                                    <p class="text-sm text-gray-400 group-hover:text-blue-300">2024</p>
+                                                </div>
+                                                </a>
+                                            </div>
+                                          
                                         </div>
                                     </div>
                                 </div>
@@ -849,10 +909,10 @@
             <div class="max-w-4xl mx-auto">
                 <div class="text-center mb-16 animate-fade-in-up">
                     <h2 class="text-4xl lg:text-5xl font-bold mb-6">
-                        <span class="text-gradient">Kết Nối Với Tôi</span>
+                        <span class="text-gradient">Connect with me</span>
                     </h2>
                     <p class="text-xl text-slate-400 max-w-2xl mx-auto">
-                        Có ý tưởng thú vị? Hãy cùng nhau biến nó thành hiện thực!
+                        Have a great idea? Let's make it happen!
                     </p>
                 </div>
 
@@ -861,7 +921,7 @@
                     <div class="space-y-8" data-aos="fade-right" data-aos-duration="1000" data-aos-delay="200">
                         <div class="glass rounded-3xl p-8">
                             <h3 class="text-2xl font-bold mb-8 text-center">
-                                <i class="fas fa-address-card mr-3 text-blue-400"></i>Thông Tin Liên Hệ
+                                <i class="fas fa-address-card mr-3 text-blue-400"></i>Contact Information
                             </h3>
                             <div class="space-y-6">
                                 <div
@@ -882,7 +942,7 @@
                                         <i class="fas fa-phone text-white"></i>
                                     </div>
                                     <div>
-                                        <p class="text-slate-400 text-sm">Điện thoại</p>
+                                        <p class="text-slate-400 text-sm">Phone</p>
                                         <p class="text-white font-medium">+84 869 620 295</p>
                                     </div>
                                 </div>
@@ -893,7 +953,7 @@
                                         <i class="fas fa-map-marker-alt text-white"></i>
                                     </div>
                                     <div>
-                                        <p class="text-slate-400 text-sm">Địa chỉ</p>
+                                        <p class="text-slate-400 text-sm">Location</p>
                                         <p class="text-white font-medium">Hà Nội, Việt Nam</p>
                                     </div>
                                 </div>
@@ -902,24 +962,24 @@
 
                         <!-- Quick Contact -->
                         <div class="glass rounded-3xl p-8">
-                            <h4 class="text-xl font-bold mb-6 text-center">Liên hệ nhanh</h4>
+                            <h4 class="text-xl font-bold mb-6 text-center">Contact quickly</h4>
                             <div class="grid grid-cols-2 gap-4">
-                                <a href="#"
+                                <a href="https://www.linkedin.com/in/me/?trk=eml-email_profile_qp_welcome_01-quality~profile~status~widget-0-add_position_button" target="_blank"
                                     class="flex items-center justify-center space-x-2 p-4 bg-blue-600 rounded-xl hover:bg-blue-700 transition-colors hover-scale">
                                     <i class="fab fa-linkedin text-white"></i>
                                     <span class="text-white font-medium">LinkedIn</span>
                                 </a>
-                                <a href="#"
+                                <a href="https://github.com/AnhNT110723" target="_blank"
                                     class="flex items-center justify-center space-x-2 p-4 bg-gray-800 rounded-xl hover:bg-gray-700 transition-colors hover-scale">
                                     <i class="fab fa-github text-white"></i>
                                     <span class="text-white font-medium">GitHub</span>
                                 </a>
-                                <a href="#"
+                                <!-- <a href="#"
                                     class="flex items-center justify-center space-x-2 p-4 bg-blue-400 rounded-xl hover:bg-blue-500 transition-colors hover-scale">
                                     <i class="fab fa-twitter text-white"></i>
                                     <span class="text-white font-medium">Twitter</span>
-                                </a>
-                                <a href="#"
+                                </a> -->
+                                <a href="mailto:anhnt21072003@gmail.com"
                                     class="flex items-center justify-center space-x-2 p-4 bg-red-600 rounded-xl hover:bg-red-700 transition-colors hover-scale">
                                     <i class="fas fa-envelope text-white"></i>
                                     <span class="text-white font-medium">Email</span>
@@ -932,41 +992,41 @@
                     <div class="" data-aos="fade-left" data-aos-duration="1000" data-aos-delay="200">
                         <div class="glass rounded-3xl p-8">
                             <h3 class="text-2xl font-bold mb-8 text-center">
-                                <i class="fas fa-paper-plane mr-3 text-purple-400"></i>Gửi Tin Nhắn
+                                <i class="fas fa-paper-plane mr-3 text-purple-400"></i>Send Message
                             </h3>
                             <form class="space-y-6" onsubmit="handleContactSubmit(event)">
                                 <div class="grid md:grid-cols-2 gap-6">
                                     <div>
-                                        <label class="block text-slate-300 text-sm font-medium mb-3">Họ tên *</label>
+                                        <label class="block text-slate-300 text-sm font-medium mb-3">Full Name *</label>
                                         <input type="text" required
                                             class="w-full px-4 py-4 bg-slate-700/50 border border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-slate-400 transition-all duration-300"
-                                            placeholder="Nhập họ tên">
+                                            placeholder="Enter fullname">
                                     </div>
                                     <div>
                                         <label class="block text-slate-300 text-sm font-medium mb-3">Email *</label>
                                         <input type="email" required
                                             class="w-full px-4 py-4 bg-slate-700/50 border border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-slate-400 transition-all duration-300"
-                                            placeholder="Nhập email">
+                                            placeholder="Enter email">
                                     </div>
                                 </div>
                                 <div>
-                                    <label class="block text-slate-300 text-sm font-medium mb-3">Chủ đề</label>
+                                    <label class="block text-slate-300 text-sm font-medium mb-3">Subject</label>
                                     <input type="text"
                                         class="w-full px-4 py-4 bg-slate-700/50 border border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-slate-400 transition-all duration-300"
-                                        placeholder="Chủ đề tin nhắn">
+                                        placeholder="Message subject">
                                 </div>
                                 <div>
-                                    <label class="block text-slate-300 text-sm font-medium mb-3">Tin nhắn *</label>
+                                    <label class="block text-slate-300 text-sm font-medium mb-3">Message *</label>
                                     <textarea rows="5" required
                                         class="w-full px-4 py-4 bg-slate-700/50 border border-slate-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent text-white placeholder-slate-400 transition-all duration-300 resize-none"
-                                        placeholder="Nhập tin nhắn của bạn..."></textarea>
+                                        placeholder="Enter your message..."></textarea>
                                 </div>
                                 <button type="submit"
                                     class="w-full bg-gradient-primary text-white py-4 rounded-xl font-semibold hover-glow transition-all duration-300">
-                                    <i class="fas fa-paper-plane mr-2"></i>Gửi Tin Nhắn
+                                    <i class="fas fa-paper-plane mr-2"></i>Send
                                 </button>
                                 <p class="text-sm text-slate-400 text-center">
-                                    <i class="fas fa-info-circle mr-1"></i>Demo - Tin nhắn sẽ không được gửi thực tế
+                                    <i class="fas fa-info-circle mr-1"></i>Demo - The message will not be sent actually.
                                 </p>
                             </form>
                         </div>
@@ -998,8 +1058,7 @@
 
                 <div class="border-t border-slate-700 pt-8">
                     <p class="text-slate-500 font-mono">
-                        &copy; 2024 Nguyễn Văn An. Made with <span class="text-red-400">❤️</span> and lots of <span
-                            class="text-yellow-400">☕</span>
+                        &copy; 2024 Nguyễn Tuấn Anh. Made with <span class="text-red-400">❤️</span> 
                     </p>
                 </div>
             </div>
