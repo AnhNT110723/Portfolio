@@ -3,677 +3,969 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Teacher Dashboard - TOEIC Learning System</title>
+    <title>TOEIC Teacher Dashboard - Flashcard</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body {
             box-sizing: border-box;
         }
+        .sidebar-transition {
+            transition: transform 0.3s ease-in-out;
+        }
         .fade-in {
-            animation: fadeIn 0.3s ease-in;
+            animation: fadeIn 0.3s ease-in-out;
         }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        .tab-active {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
+        .modal-backdrop {
+            backdrop-filter: blur(4px);
         }
-        .gradient-bg {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        .section {
+            display: none;
         }
+        .section.active {
+            display: block;
+        }
+        .nav-btn.active {
+            background-color: #dbeafe;
+            color: #2563eb;
+        }
+        .flashcard {
+            perspective: 1000px;
+            height: 200px;
+        }
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .flashcard.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .flashcard-back {
+            transform: rotateY(180deg);
+        }
+        .difficulty-easy { border-left: 4px solid #10b981; }
+        .difficulty-medium { border-left: 4px solid #f59e0b; }
+        .difficulty-hard { border-left: 4px solid #ef4444; }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen">
+<body class="bg-gradient-to-br from-blue-50 to-indigo-100 min-h-full">
     <!-- Header -->
-    <header class="gradient-bg text-white shadow-lg">
+    <header class="bg-white shadow-lg border-b-4 border-blue-500">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex justify-between items-center py-4">
                 <div class="flex items-center space-x-4">
-                    <div class="w-10 h-10 bg-white rounded-lg flex items-center justify-center">
-                        <span class="text-purple-600 font-bold text-xl">T</span>
+                    <div class="bg-blue-600 text-white p-2 rounded-lg">
+                        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z"/>
+                        </svg>
                     </div>
-                    <h1 class="text-2xl font-bold">TOEIC Teacher Dashboard</h1>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900">TOEIC Teacher Dashboard</h1>
+                        <p class="text-sm text-gray-600">Quản lý khóa học và bài tập TOEIC</p>
+                    </div>
                 </div>
                 <div class="flex items-center space-x-4">
-                    <span class="text-purple-100">Xin chào, Giáo viên Nguyễn</span>
-                    <button onclick="logout()" class="bg-white bg-opacity-20 hover:bg-opacity-30 px-4 py-2 rounded-lg transition-all duration-200">
-                        Đăng xuất
-                    </button>
+                    <div class="relative">
+                        <button id="profileBtn" class="flex items-center space-x-2 bg-gray-100 hover:bg-gray-200 px-4 py-2 rounded-lg transition-colors">
+                            <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
+                                T
+                            </div>
+                            <span class="font-medium text-gray-700">Teacher Nguyễn</span>
+                            <svg class="w-4 h-4 text-gray-500" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </header>
 
-    <!-- Navigation Tabs -->
-    <nav class="bg-white shadow-sm border-b">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex space-x-8">
-                <button onclick="showTab('dashboard')" id="tab-dashboard" class="tab-active px-4 py-3 text-sm font-medium rounded-t-lg transition-all duration-200">
-                    📊 Dashboard
-                </button>
-                <button onclick="showTab('courses')" id="tab-courses" class="px-4 py-3 text-sm font-medium text-gray-600 hover:text-purple-600 transition-all duration-200">
-                    📚 Khóa học
-                </button>
-                <button onclick="showTab('ai-content')" id="tab-ai-content" class="px-4 py-3 text-sm font-medium text-gray-600 hover:text-purple-600 transition-all duration-200">
-                    🤖 Tạo nội dung AI
-                </button>
-                <button onclick="showTab('question-bank')" id="tab-question-bank" class="px-4 py-3 text-sm font-medium text-gray-600 hover:text-purple-600 transition-all duration-200">
-                    🏦 Ngân hàng câu hỏi
-                </button>
-                <button onclick="showTab('analytics')" id="tab-analytics" class="px-4 py-3 text-sm font-medium text-gray-600 hover:text-purple-600 transition-all duration-200">
-                    📈 Phân tích
-                </button>
-            </div>
-        </div>
-    </nav>
+    <div class="flex h-full">
+        <!-- Sidebar -->
+        <aside class="w-64 bg-white shadow-lg">
+            <nav class="mt-6">
+                <div class="px-4 space-y-2">
+                    <button onclick="showSection('dashboard')" class="nav-btn w-full flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">
+                        <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M3 4a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V4zM3 10a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H4a1 1 0 01-1-1v-6zM14 9a1 1 0 00-1 1v6a1 1 0 001 1h2a1 1 0 001-1v-6a1 1 0 00-1-1h-2z"/>
+                        </svg>
+                        Tổng quan
+                    </button>
+                    <button onclick="showSection('practice')" class="nav-btn w-full flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">
+                        <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                        </svg>
+                        Bài tập Practice
+                    </button>
+                    <button onclick="showSection('bank')" class="nav-btn w-full flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">
+                        <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm0 6v-2h12v2H4zm0 2v2h12v-2H4z" clip-rule="evenodd"/>
+                        </svg>
+                        Ngân hàng đề
+                    </button>
+                    <button onclick="showSection('flashcard')" class="nav-btn w-full flex items-center px-4 py-3 text-gray-700 hover:bg-blue-50 hover:text-blue-600 rounded-lg transition-colors">
+                        <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zM2 11a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"/>
+                        </svg>
+                        Flashcard từ vựng
+                    </button>
+                </div>
+            </nav>
+        </aside>
 
-    <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <!-- Dashboard Tab -->
-        <div id="content-dashboard" class="tab-content fade-in">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm text-gray-600">Tổng khóa học</p>
-                            <p class="text-3xl font-bold text-gray-900">12</p>
+        <!-- Main Content -->
+        <main class="flex-1 p-6">
+            <!-- Dashboard Section -->
+            <div id="dashboard" class="section active">
+                <div class="mb-6">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Chào mừng trở lại!</h2>
+                    <p class="text-gray-600">Tổng quan về hoạt động giảng dạy của bạn</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                    <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-blue-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-600">Lớp học được giao</p>
+                                <p class="text-3xl font-bold text-gray-900">8</p>
+                            </div>
+                            <div class="bg-blue-100 p-3 rounded-full">
+                                <svg class="w-6 h-6 text-blue-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3z"/>
+                                </svg>
+                            </div>
                         </div>
-                        <div class="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-green-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-600">Bài tập đã tạo</p>
+                                <p class="text-3xl font-bold text-gray-900">24</p>
+                            </div>
+                            <div class="bg-green-100 p-3 rounded-full">
+                                <svg class="w-6 h-6 text-green-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-purple-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-600">Đề thi</p>
+                                <p class="text-3xl font-bold text-gray-900">12</p>
+                            </div>
+                            <div class="bg-purple-100 p-3 rounded-full">
+                                <svg class="w-6 h-6 text-purple-600" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-orange-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-600">Flashcard từ vựng</p>
+                                <p class="text-3xl font-bold text-gray-900">89</p>
+                            </div>
+                            <div class="bg-orange-100 p-3 rounded-full">
+                                <span class="text-orange-600 text-xl">📚</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="bg-white rounded-xl shadow-lg p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Thao tác nhanh</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        <button onclick="showSection('aiGenerator')" class="flex items-center justify-center space-x-3 p-4 bg-gradient-to-r from-purple-500 to-blue-600 text-white rounded-lg hover:from-purple-600 hover:to-blue-700 transition-all">
+                            <span class="text-2xl">🤖</span>
+                            <div class="text-left">
+                                <div class="font-semibold">AI Generator</div>
+                                <div class="text-sm opacity-90">Tạo câu hỏi tự động</div>
+                            </div>
+                        </button>
+                        <button onclick="showSection('practice')" class="flex items-center justify-center space-x-3 p-4 bg-gradient-to-r from-green-500 to-teal-600 text-white rounded-lg hover:from-green-600 hover:to-teal-700 transition-all">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M3 5a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 10a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zM3 15a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clip-rule="evenodd"/>
+                            </svg>
+                            <div class="text-left">
+                                <div class="font-semibold">Tạo Mini-test</div>
+                                <div class="text-sm opacity-90">Bài tập Practice</div>
+                            </div>
+                        </button>
+                        <button onclick="showSection('bank')" class="flex items-center justify-center space-x-3 p-4 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-lg hover:from-blue-600 hover:to-indigo-700 transition-all">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M4 4a2 2 0 00-2 2v8a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2H4zm0 6v-2h12v2H4zm0 2v2h12v-2H4z" clip-rule="evenodd"/>
+                            </svg>
+                            <div class="text-left">
+                                <div class="font-semibold">Question Bank</div>
+                                <div class="text-sm opacity-90">Ngân hàng câu hỏi</div>
+                            </div>
+                        </button>
+                        <button onclick="showSection('flashcard')" class="flex items-center justify-center space-x-3 p-4 bg-gradient-to-r from-orange-500 to-red-600 text-white rounded-lg hover:from-orange-600 hover:to-red-700 transition-all">
                             <span class="text-2xl">📚</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm text-gray-600">Học viên hoạt động</p>
-                            <p class="text-3xl font-bold text-gray-900">248</p>
-                        </div>
-                        <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-                            <span class="text-2xl">👥</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm text-gray-600">Câu hỏi trong bank</p>
-                            <p class="text-3xl font-bold text-gray-900">1,456</p>
-                        </div>
-                        <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-                            <span class="text-2xl">❓</span>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm text-gray-600">Điểm trung bình</p>
-                            <p class="text-3xl font-bold text-gray-900">785</p>
-                        </div>
-                        <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-                            <span class="text-2xl">⭐</span>
-                        </div>
+                            <div class="text-left">
+                                <div class="font-semibold">Flashcard</div>
+                                <div class="text-sm opacity-90">Từ vựng TOEIC</div>
+                            </div>
+                        </button>
                     </div>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                    <h3 class="text-lg font-semibold mb-4">Khóa học gần đây</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
-                            <div>
-                                <h4 class="font-medium">TOEIC Listening Intensive</h4>
-                                <p class="text-sm text-gray-600">45 học viên • Cập nhật 2 giờ trước</p>
-                            </div>
-                            <button class="text-purple-600 hover:text-purple-700 font-medium">Xem chi tiết</button>
+            <!-- Flashcard Section -->
+            <div id="flashcard" class="section">
+                <div class="mb-6">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h2 class="text-3xl font-bold text-gray-900 mb-2">📚 Flashcard từ vựng TOEIC</h2>
+                            <p class="text-gray-600">Quản lý và tạo flashcard từ vựng cho học sinh</p>
                         </div>
-                        <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg">
+                        <button onclick="openCreateFlashcardModal()" class="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-orange-500 to-red-600 text-white rounded-lg hover:from-orange-600 hover:to-red-700 transition-all shadow-lg">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
+                            </svg>
+                            <span>Tạo Flashcard mới</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Flashcard Stats -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                    <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-orange-500">
+                        <div class="flex items-center justify-between">
                             <div>
-                                <h4 class="font-medium">TOEIC Reading Advanced</h4>
-                                <p class="text-sm text-gray-600">32 học viên • Cập nhật 5 giờ trước</p>
+                                <p class="text-sm font-medium text-gray-600">Tổng từ vựng</p>
+                                <p class="text-3xl font-bold text-gray-900">89</p>
                             </div>
-                            <button class="text-purple-600 hover:text-purple-700 font-medium">Xem chi tiết</button>
+                            <div class="bg-orange-100 p-3 rounded-full">
+                                <span class="text-orange-600 text-xl">📚</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-green-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-600">Từ dễ</p>
+                                <p class="text-3xl font-bold text-gray-900">45</p>
+                            </div>
+                            <div class="bg-green-100 p-3 rounded-full">
+                                <span class="text-green-600 text-xl">😊</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-yellow-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-600">Từ trung bình</p>
+                                <p class="text-3xl font-bold text-gray-900">32</p>
+                            </div>
+                            <div class="bg-yellow-100 p-3 rounded-full">
+                                <span class="text-yellow-600 text-xl">🤔</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-xl shadow-lg border-l-4 border-red-500">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <p class="text-sm font-medium text-gray-600">Từ khó</p>
+                                <p class="text-3xl font-bold text-gray-900">12</p>
+                            </div>
+                            <div class="bg-red-100 p-3 rounded-full">
+                                <span class="text-red-600 text-xl">😰</span>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                    <h3 class="text-lg font-semibold mb-4">Hoạt động gần đây</h3>
-                    <div class="space-y-4">
-                        <div class="flex items-start space-x-3">
-                            <div class="w-2 h-2 bg-green-500 rounded-full mt-2"></div>
+                <!-- Filter and Search -->
+                <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
+                    <div class="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+                        <div class="flex items-center space-x-4">
                             <div>
-                                <p class="text-sm">AI đã tạo 15 câu hỏi Reading mới</p>
-                                <p class="text-xs text-gray-500">10 phút trước</p>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Chủ đề</label>
+                                <select id="topicFilter" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+                                    <option>Tất cả</option>
+                                    <option>Business</option>
+                                    <option>Travel</option>
+                                    <option>Technology</option>
+                                    <option>Finance</option>
+                                    <option>Health</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Độ khó</label>
+                                <select id="difficultyFilter" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+                                    <option>Tất cả</option>
+                                    <option>Dễ</option>
+                                    <option>Trung bình</option>
+                                    <option>Khó</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Loại từ</label>
+                                <select id="typeFilter" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+                                    <option>Tất cả</option>
+                                    <option>Noun</option>
+                                    <option>Verb</option>
+                                    <option>Adjective</option>
+                                    <option>Adverb</option>
+                                    <option>Phrase</option>
+                                </select>
                             </div>
                         </div>
-                        <div class="flex items-start space-x-3">
-                            <div class="w-2 h-2 bg-blue-500 rounded-full mt-2"></div>
-                            <div>
-                                <p class="text-sm">Học viên Trần Văn A hoàn thành bài thi</p>
-                                <p class="text-xs text-gray-500">25 phút trước</p>
+                        <div class="flex items-center space-x-3">
+                            <div class="relative">
+                                <input type="text" id="searchInput" placeholder="Tìm kiếm từ vựng..." class="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500 w-64">
+                                <svg class="w-5 h-5 text-gray-400 absolute left-3 top-2.5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <button onclick="filterFlashcards()" class="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors">
+                                Tìm kiếm
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Flashcard Grid -->
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="flashcardGrid">
+                    <!-- Flashcard 1 -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 difficulty-easy" data-flashcard-id="1">
+                        <div class="p-4 border-b border-gray-100">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs font-medium">Dễ</span>
+                                <div class="flex items-center space-x-1">
+                                    <button onclick="editFlashcard(1)" class="text-blue-600 hover:text-blue-800 p-1 rounded">
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
+                                        </svg>
+                                    </button>
+                                    <button onclick="deleteFlashcard(1)" class="text-red-600 hover:text-red-800 p-1 rounded">
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">Business</span>
+                                <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs">Noun</span>
                             </div>
                         </div>
-                        <div class="flex items-start space-x-3">
-                            <div class="w-2 h-2 bg-yellow-500 rounded-full mt-2"></div>
-                            <div>
-                                <p class="text-sm">Câu hỏi #456 được báo cáo nhiều</p>
-                                <p class="text-xs text-gray-500">1 giờ trước</p>
+                        
+                        <div class="flashcard" onclick="flipCard(1)">
+                            <div class="flashcard-inner" id="card-1">
+                                <div class="flashcard-front bg-gradient-to-br from-blue-50 to-indigo-100">
+                                    <div class="text-center">
+                                        <h3 class="text-2xl font-bold text-gray-900 mb-2">accomplish</h3>
+                                        <p class="text-sm text-gray-600">/əˈkʌmplɪʃ/</p>
+                                        <p class="text-xs text-gray-500 mt-2">Click để xem nghĩa</p>
+                                    </div>
+                                </div>
+                                <div class="flashcard-back bg-gradient-to-br from-green-50 to-emerald-100">
+                                    <div class="text-center">
+                                        <h4 class="text-lg font-semibold text-gray-900 mb-2">Hoàn thành, đạt được</h4>
+                                        <p class="text-sm text-gray-700 mb-2">To complete successfully</p>
+                                        <p class="text-xs text-gray-600 italic">"She accomplished her goals ahead of schedule."</p>
+                                    </div>
+                                </div>
                             </div>
                         </div>
+                        
+                        <div class="p-4 bg-gray-50">
+                            <div class="flex items-center justify-between text-xs text-gray-500">
+                                <span>Tạo: 15/11/2024</span>
+                                <span>Đã dùng: 5 lần</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Flashcard 2 -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 difficulty-medium" data-flashcard-id="2">
+                        <div class="p-4 border-b border-gray-100">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded-full text-xs font-medium">Trung bình</span>
+                                <div class="flex items-center space-x-1">
+                                    <button onclick="editFlashcard(2)" class="text-blue-600 hover:text-blue-800 p-1 rounded">
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
+                                        </svg>
+                                    </button>
+                                    <button onclick="deleteFlashcard(2)" class="text-red-600 hover:text-red-800 p-1 rounded">
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">Finance</span>
+                                <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs">Verb</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flashcard" onclick="flipCard(2)">
+                            <div class="flashcard-inner" id="card-2">
+                                <div class="flashcard-front bg-gradient-to-br from-yellow-50 to-orange-100">
+                                    <div class="text-center">
+                                        <h3 class="text-2xl font-bold text-gray-900 mb-2">negotiate</h3>
+                                        <p class="text-sm text-gray-600">/nɪˈɡoʊʃieɪt/</p>
+                                        <p class="text-xs text-gray-500 mt-2">Click để xem nghĩa</p>
+                                    </div>
+                                </div>
+                                <div class="flashcard-back bg-gradient-to-br from-green-50 to-emerald-100">
+                                    <div class="text-center">
+                                        <h4 class="text-lg font-semibold text-gray-900 mb-2">Đàm phán, thương lượng</h4>
+                                        <p class="text-sm text-gray-700 mb-2">To discuss terms and reach an agreement</p>
+                                        <p class="text-xs text-gray-600 italic">"They negotiated a better contract."</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="p-4 bg-gray-50">
+                            <div class="flex items-center justify-between text-xs text-gray-500">
+                                <span>Tạo: 14/11/2024</span>
+                                <span>Đã dùng: 8 lần</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Flashcard 3 -->
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 difficulty-hard" data-flashcard-id="3">
+                        <div class="p-4 border-b border-gray-100">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs font-medium">Khó</span>
+                                <div class="flex items-center space-x-1">
+                                    <button onclick="editFlashcard(3)" class="text-blue-600 hover:text-blue-800 p-1 rounded">
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
+                                        </svg>
+                                    </button>
+                                    <button onclick="deleteFlashcard(3)" class="text-red-600 hover:text-red-800 p-1 rounded">
+                                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                            <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                        </svg>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="flex items-center space-x-2">
+                                <span class="bg-indigo-100 text-indigo-800 px-2 py-1 rounded-full text-xs">Technology</span>
+                                <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs">Adjective</span>
+                            </div>
+                        </div>
+                        
+                        <div class="flashcard" onclick="flipCard(3)">
+                            <div class="flashcard-inner" id="card-3">
+                                <div class="flashcard-front bg-gradient-to-br from-red-50 to-pink-100">
+                                    <div class="text-center">
+                                        <h3 class="text-2xl font-bold text-gray-900 mb-2">comprehensive</h3>
+                                        <p class="text-sm text-gray-600">/ˌkɑːmprɪˈhensɪv/</p>
+                                        <p class="text-xs text-gray-500 mt-2">Click để xem nghĩa</p>
+                                    </div>
+                                </div>
+                                <div class="flashcard-back bg-gradient-to-br from-green-50 to-emerald-100">
+                                    <div class="text-center">
+                                        <h4 class="text-lg font-semibold text-gray-900 mb-2">Toàn diện, bao quát</h4>
+                                        <p class="text-sm text-gray-700 mb-2">Complete and including everything</p>
+                                        <p class="text-xs text-gray-600 italic">"We need a comprehensive analysis of the market."</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="p-4 bg-gray-50">
+                            <div class="flex items-center justify-between text-xs text-gray-500">
+                                <span>Tạo: 13/11/2024</span>
+                                <span>Đã dùng: 3 lần</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Add more flashcards placeholder -->
+                    <div class="bg-gradient-to-br from-gray-50 to-blue-50 rounded-xl shadow-lg border-2 border-dashed border-gray-300 flex items-center justify-center min-h-[300px]">
+                        <div class="text-center">
+                            <div class="bg-gray-100 p-4 rounded-full mb-4 mx-auto w-16 h-16 flex items-center justify-center">
+                                <svg class="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
+                                </svg>
+                            </div>
+                            <h3 class="text-lg font-semibold text-gray-900 mb-2">Tạo Flashcard mới</h3>
+                            <p class="text-gray-600 mb-4">Thêm từ vựng mới cho học sinh</p>
+                            <button onclick="openCreateFlashcardModal()" class="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors">
+                                Tạo ngay
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="mt-8 flex justify-center">
+                    <div class="flex items-center space-x-2">
+                        <button class="px-3 py-1 bg-orange-600 text-white rounded">1</button>
+                        <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">2</button>
+                        <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">3</button>
+                        <span class="px-3 py-1">...</span>
+                        <button class="px-3 py-1 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">8</button>
                     </div>
                 </div>
             </div>
-        </div>
 
-        <!-- AI Content Creation Tab -->
-        <div id="content-ai-content" class="tab-content hidden">
-            <div class="bg-white rounded-xl shadow-sm p-8 border border-gray-100">
-                <h2 class="text-2xl font-bold mb-6">🤖 Tạo nội dung với AI</h2>
+            <!-- Other sections remain the same -->
+            <div id="practice" class="section">
+                <div class="mb-6">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Bài tập Practice</h2>
+                    <p class="text-gray-600">Tạo mini-test cho từng Part TOEIC</p>
+                </div>
+            </div>
+
+            <div id="bank" class="section">
+                <div class="mb-6">
+                    <h2 class="text-3xl font-bold text-gray-900 mb-2">Question Bank</h2>
+                    <p class="text-gray-600">Ngân hàng câu hỏi đã được lưu</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Create/Edit Flashcard Modal -->
+    <div id="flashcardModal" class="hidden fixed inset-0 bg-black bg-opacity-50 modal-backdrop z-50">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-full overflow-y-auto">
+                <div class="p-6 border-b border-gray-200">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-xl font-semibold text-gray-900" id="modalTitle">Tạo Flashcard mới</h3>
+                        <button onclick="closeFlashcardModal()" class="text-gray-400 hover:text-gray-600">
+                            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
+                                <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
                 
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                    <!-- Reading Content Creation -->
-                    <div class="border border-gray-200 rounded-lg p-6">
-                        <h3 class="text-xl font-semibold mb-4 flex items-center">
-                            📖 Tạo bài Reading
-                        </h3>
+                <form id="flashcardForm" class="p-6 space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Left Column -->
                         <div class="space-y-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Chọn phương thức nhập liệu:</label>
-                                <div class="flex space-x-4">
-                                    <label class="flex items-center">
-                                        <input type="radio" name="reading-input" value="text" class="mr-2" checked>
-                                        <span class="text-sm">Nhập văn bản</span>
-                                    </label>
-                                    <label class="flex items-center">
-                                        <input type="radio" name="reading-input" value="file" class="mr-2">
-                                        <span class="text-sm">Tải file (PDF, DOCX)</span>
-                                    </label>
-                                </div>
-                            </div>
-                            
-                            <div id="text-input-reading">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Đoạn văn:</label>
-                                <textarea class="w-full h-32 p-3 border border-gray-300 rounded-lg resize-none" placeholder="Dán đoạn văn TOEIC Reading tại đây..."></textarea>
-                            </div>
-                            
-                            <div id="file-input-reading" class="hidden">
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Tải file:</label>
-                                <div class="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
-                                    <input type="file" accept=".pdf,.docx" class="hidden" id="reading-file">
-                                    <label for="reading-file" class="cursor-pointer">
-                                        <div class="text-gray-400 mb-2">📄</div>
-                                        <p class="text-sm text-gray-600">Kéo thả file hoặc click để chọn</p>
-                                        <p class="text-xs text-gray-500">Hỗ trợ PDF, DOCX</p>
-                                    </label>
-                                </div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Từ vựng (Tiếng Anh) *</label>
+                                <input type="text" id="englishWord" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500" placeholder="Nhập từ tiếng Anh">
                             </div>
                             
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Số câu hỏi:</label>
-                                <select class="w-full p-3 border border-gray-300 rounded-lg">
-                                    <option>5 câu hỏi</option>
-                                    <option>10 câu hỏi</option>
-                                    <option>15 câu hỏi</option>
-                                </select>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Phiên âm</label>
+                                <input type="text" id="pronunciation" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500" placeholder="/fəˈnetɪk/">
                             </div>
                             
-                            <button onclick="generateReadingQuestions()" class="w-full bg-purple-600 hover:bg-purple-700 text-white py-3 px-4 rounded-lg font-medium transition-colors duration-200">
-                                🚀 Tạo câu hỏi Reading
-                            </button>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Nghĩa tiếng Việt *</label>
+                                <input type="text" id="vietnameseMeaning" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500" placeholder="Nghĩa tiếng Việt">
+                            </div>
+                            
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Định nghĩa (Tiếng Anh)</label>
+                                <textarea id="englishDefinition" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500" rows="3" placeholder="English definition"></textarea>
+                            </div>
                         </div>
-                    </div>
-
-                    <!-- Listening Content Creation -->
-                    <div class="border border-gray-200 rounded-lg p-6">
-                        <h3 class="text-xl font-semibold mb-4 flex items-center">
-                            🎧 Tạo bài Listening
-                        </h3>
+                        
+                        <!-- Right Column -->
                         <div class="space-y-4">
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Chọn loại bài Listening:</label>
-                                <select class="w-full p-3 border border-gray-300 rounded-lg">
-                                    <option>Part 1: Mô tả hình ảnh</option>
-                                    <option>Part 2: Hỏi đáp</option>
-                                    <option>Part 3: Đối thoại ngắn</option>
-                                    <option>Part 4: Bài nói chuyện ngắn</option>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Chủ đề *</label>
+                                <select id="topic" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+                                    <option value="">Chọn chủ đề</option>
+                                    <option value="Business">Business</option>
+                                    <option value="Travel">Travel</option>
+                                    <option value="Technology">Technology</option>
+                                    <option value="Finance">Finance</option>
+                                    <option value="Health">Health</option>
+                                    <option value="Education">Education</option>
                                 </select>
                             </div>
                             
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Chủ đề:</label>
-                                <select class="w-full p-3 border border-gray-300 rounded-lg">
-                                    <option>Công việc văn phòng</option>
-                                    <option>Du lịch & Giao thông</option>
-                                    <option>Mua sắm & Dịch vụ</option>
-                                    <option>Giải trí & Sự kiện</option>
-                                    <option>Sức khỏe & Y tế</option>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Loại từ *</label>
+                                <select id="wordType" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+                                    <option value="">Chọn loại từ</option>
+                                    <option value="Noun">Noun (Danh từ)</option>
+                                    <option value="Verb">Verb (Động từ)</option>
+                                    <option value="Adjective">Adjective (Tính từ)</option>
+                                    <option value="Adverb">Adverb (Trạng từ)</option>
+                                    <option value="Phrase">Phrase (Cụm từ)</option>
                                 </select>
                             </div>
                             
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Mô tả nội dung (tùy chọn):</label>
-                                <textarea class="w-full h-24 p-3 border border-gray-300 rounded-lg resize-none" placeholder="Mô tả ngắn gọn về tình huống hoặc nội dung mong muốn..."></textarea>
-                            </div>
-                            
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-2">Số câu hỏi:</label>
-                                <select class="w-full p-3 border border-gray-300 rounded-lg">
-                                    <option>3 câu hỏi</option>
-                                    <option>5 câu hỏi</option>
-                                    <option>10 câu hỏi</option>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Độ khó *</label>
+                                <select id="difficulty" required class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500">
+                                    <option value="">Chọn độ khó</option>
+                                    <option value="Dễ">Dễ</option>
+                                    <option value="Trung bình">Trung bình</option>
+                                    <option value="Khó">Khó</option>
                                 </select>
                             </div>
                             
-                            <button onclick="generateListeningQuestions()" class="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-medium transition-colors duration-200">
-                                🎵 Tạo bài Listening
-                            </button>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-2">Ví dụ</label>
+                                <textarea id="example" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500" rows="3" placeholder="Câu ví dụ sử dụng từ này"></textarea>
+                            </div>
                         </div>
-                    </div>
-                </div>
-
-                <!-- AI Generation Result -->
-                <div id="ai-result" class="hidden mt-8 p-6 bg-gray-50 rounded-lg">
-                    <h4 class="text-lg font-semibold mb-4">Kết quả tạo bởi AI:</h4>
-                    <div class="bg-white p-4 rounded-lg border">
-                        <p class="text-gray-600 mb-4">AI đang xử lý yêu cầu của bạn...</p>
-                        <div class="flex space-x-4">
-                            <button class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg">Lưu vào Bank</button>
-                            <button class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg">Tạo lại</button>
-                            <button class="border border-gray-300 hover:bg-gray-50 px-4 py-2 rounded-lg">Chỉnh sửa</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Question Bank Tab -->
-        <div id="content-question-bank" class="tab-content hidden">
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100">
-                <div class="p-6 border-b border-gray-200">
-                    <div class="flex justify-between items-center">
-                        <h2 class="text-2xl font-bold">🏦 Ngân hàng câu hỏi</h2>
-                        <button class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg">+ Thêm câu hỏi</button>
                     </div>
                     
-                    <div class="mt-4 flex flex-wrap gap-4">
-                        <select class="px-4 py-2 border border-gray-300 rounded-lg">
-                            <option>Tất cả loại</option>
-                            <option>Reading</option>
-                            <option>Listening</option>
-                        </select>
-                        <select class="px-4 py-2 border border-gray-300 rounded-lg">
-                            <option>Tất cả độ khó</option>
-                            <option>Dễ</option>
-                            <option>Trung bình</option>
-                            <option>Khó</option>
-                        </select>
-                        <input type="text" placeholder="Tìm kiếm câu hỏi..." class="px-4 py-2 border border-gray-300 rounded-lg flex-1 min-w-64">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Ghi chú</label>
+                        <textarea id="notes" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-orange-500" rows="2" placeholder="Ghi chú thêm về từ vựng này"></textarea>
                     </div>
-                </div>
+                </form>
                 
-                <div class="p-6">
-                    <div class="space-y-4">
-                        <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors duration-200">
-                            <div class="flex justify-between items-start">
-                                <div class="flex-1">
-                                    <div class="flex items-center space-x-2 mb-2">
-                                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs font-medium">Reading</span>
-                                        <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs font-medium">Trung bình</span>
-                                        <span class="text-gray-500 text-sm">#Q001</span>
-                                    </div>
-                                    <p class="text-gray-800 mb-2">What is the main purpose of the passage about renewable energy sources?</p>
-                                    <div class="text-sm text-gray-600">
-                                        <span>Sử dụng: 15 lần</span> • 
-                                        <span>Tỷ lệ đúng: 78%</span> • 
-                                        <span>Tạo: 2 ngày trước</span>
-                                    </div>
-                                </div>
-                                <div class="flex space-x-2">
-                                    <button class="text-blue-600 hover:text-blue-700 p-2">✏️</button>
-                                    <button class="text-red-600 hover:text-red-700 p-2">🗑️</button>
-                                    <input type="checkbox" class="mt-2">
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="border border-gray-200 rounded-lg p-4 hover:bg-gray-50 transition-colors duration-200">
-                            <div class="flex justify-between items-start">
-                                <div class="flex-1">
-                                    <div class="flex items-center space-x-2 mb-2">
-                                        <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs font-medium">Listening</span>
-                                        <span class="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs font-medium">Khó</span>
-                                        <span class="text-gray-500 text-sm">#Q002</span>
-                                    </div>
-                                    <p class="text-gray-800 mb-2">What time does the meeting start according to the conversation?</p>
-                                    <div class="text-sm text-gray-600">
-                                        <span>Sử dụng: 8 lần</span> • 
-                                        <span>Tỷ lệ đúng: 45%</span> • 
-                                        <span>Tạo: 1 tuần trước</span>
-                                    </div>
-                                </div>
-                                <div class="flex space-x-2">
-                                    <button class="text-blue-600 hover:text-blue-700 p-2">✏️</button>
-                                    <button class="text-red-600 hover:text-red-700 p-2">🗑️</button>
-                                    <input type="checkbox" class="mt-2">
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="mt-6 flex justify-between items-center">
-                        <div class="flex space-x-2">
-                            <button class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg">Tạo bài thi từ câu hỏi đã chọn</button>
-                            <button class="border border-gray-300 hover:bg-gray-50 px-4 py-2 rounded-lg">Xuất Excel</button>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <button class="px-3 py-1 border border-gray-300 rounded">‹</button>
-                            <span class="px-3 py-1">1 / 25</span>
-                            <button class="px-3 py-1 border border-gray-300 rounded">›</button>
-                        </div>
-                    </div>
+                <div class="p-6 border-t border-gray-200 flex justify-end space-x-3">
+                    <button onclick="closeFlashcardModal()" class="px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400 transition-colors">
+                        Hủy
+                    </button>
+                    <button onclick="saveFlashcard()" class="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors">
+                        Lưu Flashcard
+                    </button>
                 </div>
             </div>
         </div>
-
-        <!-- Analytics Tab -->
-        <div id="content-analytics" class="tab-content hidden">
-            <div class="space-y-8">
-                <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                    <h2 class="text-2xl font-bold mb-6">📈 Phân tích chi tiết</h2>
-                    
-                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                        <div>
-                            <h3 class="text-lg font-semibold mb-4">Chủ đề học viên sai nhiều nhất</h3>
-                            <div class="space-y-3">
-                                <div class="flex justify-between items-center p-3 bg-red-50 rounded-lg">
-                                    <span class="font-medium">Grammar - Conditional Sentences</span>
-                                    <span class="text-red-600 font-bold">68% sai</span>
-                                </div>
-                                <div class="flex justify-between items-center p-3 bg-orange-50 rounded-lg">
-                                    <span class="font-medium">Listening Part 3 - Conversations</span>
-                                    <span class="text-orange-600 font-bold">54% sai</span>
-                                </div>
-                                <div class="flex justify-between items-center p-3 bg-yellow-50 rounded-lg">
-                                    <span class="font-medium">Reading - Inference Questions</span>
-                                    <span class="text-yellow-600 font-bold">47% sai</span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div>
-                            <h3 class="text-lg font-semibold mb-4">Câu hỏi được báo cáo nhiều</h3>
-                            <div class="space-y-3">
-                                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                                    <div>
-                                        <span class="font-medium block">Question #Q156</span>
-                                        <span class="text-sm text-gray-600">Grammar - Present Perfect</span>
-                                    </div>
-                                    <span class="text-red-600 font-bold">12 báo cáo</span>
-                                </div>
-                                <div class="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                                    <div>
-                                        <span class="font-medium block">Question #Q089</span>
-                                        <span class="text-sm text-gray-600">Listening Part 2</span>
-                                    </div>
-                                    <span class="text-red-600 font-bold">8 báo cáo</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-xl shadow-sm p-6 border border-gray-100">
-                    <h3 class="text-lg font-semibold mb-4">Dashboard học viên theo khóa học</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div class="border border-gray-200 rounded-lg p-4">
-                            <h4 class="font-semibold mb-3">TOEIC Listening Intensive</h4>
-                            <div class="space-y-2 text-sm">
-                                <div class="flex justify-between">
-                                    <span>Tổng học viên:</span>
-                                    <span class="font-medium">45</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span>Hoàn thành:</span>
-                                    <span class="font-medium text-green-600">32 (71%)</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span>Điểm TB:</span>
-                                    <span class="font-medium">742</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span>Tiến độ TB:</span>
-                                    <span class="font-medium">78%</span>
-                                </div>
-                            </div>
-                            <button class="w-full mt-3 bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg text-sm">
-                                Xem chi tiết
-                            </button>
-                        </div>
-                        
-                        <div class="border border-gray-200 rounded-lg p-4">
-                            <h4 class="font-semibold mb-3">TOEIC Reading Advanced</h4>
-                            <div class="space-y-2 text-sm">
-                                <div class="flex justify-between">
-                                    <span>Tổng học viên:</span>
-                                    <span class="font-medium">32</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span>Hoàn thành:</span>
-                                    <span class="font-medium text-green-600">28 (88%)</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span>Điểm TB:</span>
-                                    <span class="font-medium">815</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span>Tiến độ TB:</span>
-                                    <span class="font-medium">92%</span>
-                                </div>
-                            </div>
-                            <button class="w-full mt-3 bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg text-sm">
-                                Xem chi tiết
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Courses Tab -->
-        <div id="content-courses" class="tab-content hidden">
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100">
-                <div class="p-6 border-b border-gray-200">
-                    <div class="flex justify-between items-center">
-                        <h2 class="text-2xl font-bold">📚 Quản lý khóa học</h2>
-                        <button class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg">+ Tạo khóa học mới</button>
-                    </div>
-                </div>
-                
-                <div class="p-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div class="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow duration-200">
-                            <div class="flex justify-between items-start mb-4">
-                                <h3 class="font-semibold text-lg">TOEIC Listening Intensive</h3>
-                                <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">Đang hoạt động</span>
-                            </div>
-                            <p class="text-gray-600 text-sm mb-4">Khóa học tập trung phát triển kỹ năng nghe TOEIC với các bài luyện tập chuyên sâu.</p>
-                            <div class="space-y-2 text-sm text-gray-600 mb-4">
-                                <div class="flex justify-between">
-                                    <span>Học viên:</span>
-                                    <span>45</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span>Bài học:</span>
-                                    <span>24</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span>Bài thi:</span>
-                                    <span>8</span>
-                                </div>
-                            </div>
-                            <div class="flex space-x-2">
-                                <button class="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg text-sm">Quản lý</button>
-                                <button class="px-3 py-2 border border-gray-300 hover:bg-gray-50 rounded-lg text-sm">⚙️</button>
-                            </div>
-                        </div>
-                        
-                        <div class="border border-gray-200 rounded-lg p-6 hover:shadow-md transition-shadow duration-200">
-                            <div class="flex justify-between items-start mb-4">
-                                <h3 class="font-semibold text-lg">TOEIC Reading Advanced</h3>
-                                <span class="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">Đang hoạt động</span>
-                            </div>
-                            <p class="text-gray-600 text-sm mb-4">Khóa học nâng cao kỹ năng đọc hiểu với các chiến lược làm bài hiệu quả.</p>
-                            <div class="space-y-2 text-sm text-gray-600 mb-4">
-                                <div class="flex justify-between">
-                                    <span>Học viên:</span>
-                                    <span>32</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span>Bài học:</span>
-                                    <span>18</span>
-                                </div>
-                                <div class="flex justify-between">
-                                    <span>Bài thi:</span>
-                                    <span>6</span>
-                                </div>
-                            </div>
-                            <div class="flex space-x-2">
-                                <button class="flex-1 bg-purple-600 hover:bg-purple-700 text-white py-2 rounded-lg text-sm">Quản lý</button>
-                                <button class="px-3 py-2 border border-gray-300 hover:bg-gray-50 rounded-lg text-sm">⚙️</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </main>
+    </div>
 
     <script>
-        // Tab switching functionality
-        function showTab(tabName) {
-            // Hide all tab contents
-            const contents = document.querySelectorAll('.tab-content');
-            contents.forEach(content => content.classList.add('hidden'));
-            
-            // Remove active class from all tabs
-            const tabs = document.querySelectorAll('[id^="tab-"]');
-            tabs.forEach(tab => {
-                tab.classList.remove('tab-active');
-                tab.classList.add('text-gray-600', 'hover:text-purple-600');
+        let currentEditingFlashcard = null;
+        let flashcardData = [
+            {
+                id: 1,
+                englishWord: 'accomplish',
+                pronunciation: '/əˈkʌmplɪʃ/',
+                vietnameseMeaning: 'Hoàn thành, đạt được',
+                englishDefinition: 'To complete successfully',
+                topic: 'Business',
+                wordType: 'Verb',
+                difficulty: 'Dễ',
+                example: 'She accomplished her goals ahead of schedule.',
+                notes: '',
+                createdDate: '15/11/2024',
+                usageCount: 5
+            },
+            {
+                id: 2,
+                englishWord: 'negotiate',
+                pronunciation: '/nɪˈɡoʊʃieɪt/',
+                vietnameseMeaning: 'Đàm phán, thương lượng',
+                englishDefinition: 'To discuss terms and reach an agreement',
+                topic: 'Finance',
+                wordType: 'Verb',
+                difficulty: 'Trung bình',
+                example: 'They negotiated a better contract.',
+                notes: '',
+                createdDate: '14/11/2024',
+                usageCount: 8
+            },
+            {
+                id: 3,
+                englishWord: 'comprehensive',
+                pronunciation: '/ˌkɑːmprɪˈhensɪv/',
+                vietnameseMeaning: 'Toàn diện, bao quát',
+                englishDefinition: 'Complete and including everything',
+                topic: 'Technology',
+                wordType: 'Adjective',
+                difficulty: 'Khó',
+                example: 'We need a comprehensive analysis of the market.',
+                notes: '',
+                createdDate: '13/11/2024',
+                usageCount: 3
+            }
+        ];
+
+        // Navigation functions
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
             });
             
-            // Show selected tab content
-            document.getElementById(`content-${tabName}`).classList.remove('hidden');
+            // Show target section
+            document.getElementById(sectionId).classList.add('active');
             
-            // Add active class to selected tab
-            const activeTab = document.getElementById(`tab-${tabName}`);
-            activeTab.classList.add('tab-active');
-            activeTab.classList.remove('text-gray-600', 'hover:text-purple-600');
+            // Update nav buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.closest('.nav-btn')?.classList.add('active');
         }
 
-        // Reading input method toggle
-        document.querySelectorAll('input[name="reading-input"]').forEach(radio => {
-            radio.addEventListener('change', function() {
-                const textInput = document.getElementById('text-input-reading');
-                const fileInput = document.getElementById('file-input-reading');
+        // Flashcard functions
+        function flipCard(cardId) {
+            const card = document.getElementById(`card-${cardId}`);
+            card.parentElement.classList.toggle('flipped');
+        }
+
+        function openCreateFlashcardModal() {
+            currentEditingFlashcard = null;
+            document.getElementById('modalTitle').textContent = 'Tạo Flashcard mới';
+            document.getElementById('flashcardForm').reset();
+            document.getElementById('flashcardModal').classList.remove('hidden');
+        }
+
+        function editFlashcard(flashcardId) {
+            currentEditingFlashcard = flashcardId;
+            const flashcard = flashcardData.find(f => f.id === flashcardId);
+            
+            if (flashcard) {
+                document.getElementById('modalTitle').textContent = 'Chỉnh sửa Flashcard';
+                document.getElementById('englishWord').value = flashcard.englishWord;
+                document.getElementById('pronunciation').value = flashcard.pronunciation;
+                document.getElementById('vietnameseMeaning').value = flashcard.vietnameseMeaning;
+                document.getElementById('englishDefinition').value = flashcard.englishDefinition;
+                document.getElementById('topic').value = flashcard.topic;
+                document.getElementById('wordType').value = flashcard.wordType;
+                document.getElementById('difficulty').value = flashcard.difficulty;
+                document.getElementById('example').value = flashcard.example;
+                document.getElementById('notes').value = flashcard.notes;
                 
-                if (this.value === 'text') {
-                    textInput.classList.remove('hidden');
-                    fileInput.classList.add('hidden');
-                } else {
-                    textInput.classList.add('hidden');
-                    fileInput.classList.remove('hidden');
-                }
-            });
-        });
-
-        // AI content generation functions
-        function generateReadingQuestions() {
-            const resultDiv = document.getElementById('ai-result');
-            resultDiv.classList.remove('hidden');
-            
-            // Simulate AI processing
-            setTimeout(() => {
-                resultDiv.innerHTML = `
-                    <h4 class="text-lg font-semibold mb-4">✅ Đã tạo thành công 10 câu hỏi Reading!</h4>
-                    <div class="bg-white p-4 rounded-lg border">
-                        <div class="space-y-3">
-                            <div class="p-3 bg-gray-50 rounded">
-                                <p class="font-medium">Câu 1: What is the main topic of the passage?</p>
-                                <p class="text-sm text-gray-600 mt-1">A) Environmental protection B) Renewable energy C) Climate change D) Technology advancement</p>
-                            </div>
-                            <div class="p-3 bg-gray-50 rounded">
-                                <p class="font-medium">Câu 2: According to the passage, which statement is true?</p>
-                                <p class="text-sm text-gray-600 mt-1">A) Solar energy is expensive B) Wind power is unreliable C) Green energy reduces costs D) Nuclear power is safest</p>
-                            </div>
-                            <p class="text-gray-600">... và 8 câu hỏi khác</p>
-                        </div>
-                        <div class="flex space-x-4 mt-4">
-                            <button onclick="saveToBank()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg">💾 Lưu vào Bank</button>
-                            <button onclick="generateReadingQuestions()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg">🔄 Tạo lại</button>
-                            <button class="border border-gray-300 hover:bg-gray-50 px-4 py-2 rounded-lg">✏️ Chỉnh sửa</button>
-                        </div>
-                    </div>
-                `;
-            }, 2000);
-        }
-
-        function generateListeningQuestions() {
-            const resultDiv = document.getElementById('ai-result');
-            resultDiv.classList.remove('hidden');
-            
-            // Simulate AI processing
-            setTimeout(() => {
-                resultDiv.innerHTML = `
-                    <h4 class="text-lg font-semibold mb-4">✅ Đã tạo thành công bài Listening Part 3!</h4>
-                    <div class="bg-white p-4 rounded-lg border">
-                        <div class="space-y-4">
-                            <div class="p-4 bg-blue-50 rounded-lg">
-                                <h5 class="font-medium mb-2">🎧 Audio Script (Đối thoại văn phòng)</h5>
-                                <p class="text-sm text-gray-700 italic">
-                                    "Good morning, Sarah. Did you finish the quarterly report?"<br>
-                                    "Yes, I completed it yesterday. I'll send it to you by noon."<br>
-                                    "Great! The meeting with the clients is at 3 PM today."
-                                </p>
-                            </div>
-                            <div class="space-y-2">
-                                <div class="p-3 bg-gray-50 rounded">
-                                    <p class="font-medium">Câu 1: When will Sarah send the report?</p>
-                                    <p class="text-sm text-gray-600 mt-1">A) This morning B) By noon C) This afternoon D) Tomorrow</p>
-                                </div>
-                                <div class="p-3 bg-gray-50 rounded">
-                                    <p class="font-medium">Câu 2: What time is the client meeting?</p>
-                                    <p class="text-sm text-gray-600 mt-1">A) 12:00 PM B) 2:00 PM C) 3:00 PM D) 4:00 PM</p>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="flex space-x-4 mt-4">
-                            <button onclick="saveToBank()" class="bg-purple-600 hover:bg-purple-700 text-white px-4 py-2 rounded-lg">💾 Lưu vào Bank</button>
-                            <button onclick="generateListeningQuestions()" class="bg-gray-600 hover:bg-gray-700 text-white px-4 py-2 rounded-lg">🔄 Tạo lại</button>
-                            <button class="border border-gray-300 hover:bg-gray-50 px-4 py-2 rounded-lg">✏️ Chỉnh sửa</button>
-                        </div>
-                    </div>
-                `;
-            }, 2000);
-        }
-
-        function saveToBank() {
-            alert('✅ Đã lưu câu hỏi vào ngân hàng thành công!');
-        }
-
-        function logout() {
-            if (confirm('Bạn có chắc chắn muốn đăng xuất?')) {
-                alert('Đã đăng xuất thành công!');
+                document.getElementById('flashcardModal').classList.remove('hidden');
             }
         }
 
-        // Initialize with dashboard tab
-        showTab('dashboard');
+        function closeFlashcardModal() {
+            document.getElementById('flashcardModal').classList.add('hidden');
+            currentEditingFlashcard = null;
+        }
+
+        function saveFlashcard() {
+            const form = document.getElementById('flashcardForm');
+            const formData = new FormData(form);
+            
+            const flashcardInfo = {
+                englishWord: document.getElementById('englishWord').value,
+                pronunciation: document.getElementById('pronunciation').value,
+                vietnameseMeaning: document.getElementById('vietnameseMeaning').value,
+                englishDefinition: document.getElementById('englishDefinition').value,
+                topic: document.getElementById('topic').value,
+                wordType: document.getElementById('wordType').value,
+                difficulty: document.getElementById('difficulty').value,
+                example: document.getElementById('example').value,
+                notes: document.getElementById('notes').value
+            };
+
+            // Validate required fields
+            if (!flashcardInfo.englishWord || !flashcardInfo.vietnameseMeaning || !flashcardInfo.topic || !flashcardInfo.wordType || !flashcardInfo.difficulty) {
+                showNotification('Vui lòng điền đầy đủ các trường bắt buộc!', 'error');
+                return;
+            }
+
+            if (currentEditingFlashcard) {
+                // Update existing flashcard
+                const index = flashcardData.findIndex(f => f.id === currentEditingFlashcard);
+                if (index !== -1) {
+                    flashcardData[index] = { ...flashcardData[index], ...flashcardInfo };
+                    showNotification('Flashcard đã được cập nhật!', 'success');
+                }
+            } else {
+                // Create new flashcard
+                const newFlashcard = {
+                    id: Date.now(),
+                    ...flashcardInfo,
+                    createdDate: new Date().toLocaleDateString('vi-VN'),
+                    usageCount: 0
+                };
+                flashcardData.push(newFlashcard);
+                showNotification('Flashcard mới đã được tạo!', 'success');
+            }
+
+            closeFlashcardModal();
+            renderFlashcards();
+        }
+
+        function deleteFlashcard(flashcardId) {
+            if (confirm('Bạn có chắc muốn xóa flashcard này?')) {
+                const index = flashcardData.findIndex(f => f.id === flashcardId);
+                if (index !== -1) {
+                    flashcardData.splice(index, 1);
+                    showNotification('Flashcard đã được xóa!', 'info');
+                    renderFlashcards();
+                }
+            }
+        }
+
+        function filterFlashcards() {
+            const topic = document.getElementById('topicFilter').value;
+            const difficulty = document.getElementById('difficultyFilter').value;
+            const type = document.getElementById('typeFilter').value;
+            const search = document.getElementById('searchInput').value.toLowerCase();
+
+            let filtered = flashcardData.filter(flashcard => {
+                return (topic === 'Tất cả' || topic === '' || flashcard.topic === topic) &&
+                       (difficulty === 'Tất cả' || difficulty === '' || flashcard.difficulty === difficulty) &&
+                       (type === 'Tất cả' || type === '' || flashcard.wordType === type) &&
+                       (search === '' || flashcard.englishWord.toLowerCase().includes(search) || 
+                        flashcard.vietnameseMeaning.toLowerCase().includes(search));
+            });
+
+            renderFlashcards(filtered);
+            showNotification(`Tìm thấy ${filtered.length} flashcard phù hợp`, 'info');
+        }
+
+        function renderFlashcards(data = flashcardData) {
+            const grid = document.getElementById('flashcardGrid');
+            const flashcardElements = grid.querySelectorAll('[data-flashcard-id]');
+            
+            // Remove existing flashcard elements
+            flashcardElements.forEach(el => el.remove());
+
+            // Render filtered flashcards
+            data.forEach(flashcard => {
+                const flashcardElement = createFlashcardElement(flashcard);
+                grid.insertBefore(flashcardElement, grid.lastElementChild);
+            });
+        }
+
+        function createFlashcardElement(flashcard) {
+            const difficultyClass = flashcard.difficulty === 'Dễ' ? 'difficulty-easy' : 
+                                   flashcard.difficulty === 'Trung bình' ? 'difficulty-medium' : 'difficulty-hard';
+            const difficultyColor = flashcard.difficulty === 'Dễ' ? 'bg-green-100 text-green-800' : 
+                                   flashcard.difficulty === 'Trung bình' ? 'bg-yellow-100 text-yellow-800' : 'bg-red-100 text-red-800';
+            const topicColor = getTopicColor(flashcard.topic);
+            const frontGradient = flashcard.difficulty === 'Dễ' ? 'from-blue-50 to-indigo-100' : 
+                                 flashcard.difficulty === 'Trung bình' ? 'from-yellow-50 to-orange-100' : 'from-red-50 to-pink-100';
+
+            const div = document.createElement('div');
+            div.className = `bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 ${difficultyClass}`;
+            div.setAttribute('data-flashcard-id', flashcard.id);
+            
+            div.innerHTML = `
+                <div class="p-4 border-b border-gray-100">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="${difficultyColor} px-2 py-1 rounded-full text-xs font-medium">${flashcard.difficulty}</span>
+                        <div class="flex items-center space-x-1">
+                            <button onclick="editFlashcard(${flashcard.id})" class="text-blue-600 hover:text-blue-800 p-1 rounded">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z"/>
+                                </svg>
+                            </button>
+                            <button onclick="deleteFlashcard(${flashcard.id})" class="text-red-600 hover:text-red-800 p-1 rounded">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"/>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="${topicColor} px-2 py-1 rounded-full text-xs">${flashcard.topic}</span>
+                        <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs">${flashcard.wordType}</span>
+                    </div>
+                </div>
+                
+                <div class="flashcard" onclick="flipCard(${flashcard.id})">
+                    <div class="flashcard-inner" id="card-${flashcard.id}">
+                        <div class="flashcard-front bg-gradient-to-br ${frontGradient}">
+                            <div class="text-center">
+                                <h3 class="text-2xl font-bold text-gray-900 mb-2">${flashcard.englishWord}</h3>
+                                <p class="text-sm text-gray-600">${flashcard.pronunciation}</p>
+                                <p class="text-xs text-gray-500 mt-2">Click để xem nghĩa</p>
+                            </div>
+                        </div>
+                        <div class="flashcard-back bg-gradient-to-br from-green-50 to-emerald-100">
+                            <div class="text-center">
+                                <h4 class="text-lg font-semibold text-gray-900 mb-2">${flashcard.vietnameseMeaning}</h4>
+                                <p class="text-sm text-gray-700 mb-2">${flashcard.englishDefinition}</p>
+                                <p class="text-xs text-gray-600 italic">"${flashcard.example}"</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="p-4 bg-gray-50">
+                    <div class="flex items-center justify-between text-xs text-gray-500">
+                        <span>Tạo: ${flashcard.createdDate}</span>
+                        <span>Đã dùng: ${flashcard.usageCount} lần</span>
+                    </div>
+                </div>
+            `;
+            
+            return div;
+        }
+
+        function getTopicColor(topic) {
+            const colors = {
+                'Business': 'bg-blue-100 text-blue-800',
+                'Finance': 'bg-green-100 text-green-800',
+                'Technology': 'bg-indigo-100 text-indigo-800',
+                'Travel': 'bg-purple-100 text-purple-800',
+                'Health': 'bg-pink-100 text-pink-800',
+                'Education': 'bg-yellow-100 text-yellow-800'
+            };
+            return colors[topic] || 'bg-gray-100 text-gray-800';
+        }
+
+        function showNotification(message, type = 'info') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = `fixed top-4 right-4 z-50 p-4 rounded-lg shadow-lg text-white transform translate-x-full transition-transform duration-300 ${
+                type === 'success' ? 'bg-green-600' :
+                type === 'error' ? 'bg-red-600' :
+                type === 'warning' ? 'bg-yellow-600' :
+                'bg-blue-600'
+            }`;
+            notification.innerHTML = `
+                <div class="flex items-center space-x-2">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                        ${type === 'success' ? '<path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>' :
+                          '<path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>'}
+                    </svg>
+                    <span>${message}</span>
+                </div>
+            `;
+            
+            document.body.appendChild(notification);
+            
+            // Show notification
+            setTimeout(() => {
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Hide notification after 3 seconds
+            setTimeout(() => {
+                notification.style.transform = 'translateX(full)';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 300);
+            }, 3000);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Show dashboard by default
+            showSection('dashboard');
+        });
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9882215d86a30452',t:'MTc1OTM4NjQwOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'997bd8d5307d2328',t:'MTc2MjAwNDg3Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
